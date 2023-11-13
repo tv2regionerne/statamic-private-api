@@ -18,7 +18,7 @@ Add this to the repositories section in composer.json
 "repositories": [
     {
         "type": "vcs",
-        "url": "git@github.com:tv2regionerne/statamic-reverse-relationship.git"
+        "url": "git@github.com:tv2regionerne/statamic-private-api.git"
     }
 ]
 ```
