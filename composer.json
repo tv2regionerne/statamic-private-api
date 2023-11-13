@@ -1,0 +1,19 @@
+{
+    "name": "tv2regionerne/statamic-private-api",
+    "autoload": {
+        "psr-4": {
+            "Tv2regionerne\\StatamicPrivateApi\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Private Api",
+            "description": "Statamic Private Api addon"
+        },
+        "laravel": {
+            "providers": [
+                "Tv2regionerne\\StatamicPrivateApi\\ServiceProvider"
+            ]
+        }
+    }
+}
