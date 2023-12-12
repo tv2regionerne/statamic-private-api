@@ -5,7 +5,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\Cp\Navigation\NavigationController as CpController;
+use Statamic\Http\Controllers\CP\Navigation\NavigationController as CpController;
 use Statamic\Query\ItemQueryBuilder;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\NavResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;

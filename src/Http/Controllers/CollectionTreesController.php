@@ -5,7 +5,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\Cp\Collections\CollectionTreeController as CpController;
+use Statamic\Http\Controllers\CP\Collections\CollectionTreeController as CpController;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 
 class CollectionTreesController extends ApiController

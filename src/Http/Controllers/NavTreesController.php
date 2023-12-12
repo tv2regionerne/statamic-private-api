@@ -5,7 +5,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\Cp\Navigation\NavigationTreeController as CpController;
+use Statamic\Http\Controllers\CP\Navigation\NavigationTreeController as CpController;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 
 class NavTreesController extends ApiController

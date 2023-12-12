@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\Cp\Assets\AssetsController as CpController;
+use Statamic\Http\Controllers\CP\Assets\AssetsController as CpController;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\AssetResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 

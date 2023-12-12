@@ -5,7 +5,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\Cp\Users\UsersController as CpController;
+use Statamic\Http\Controllers\CP\Users\UsersController as CpController;
 use Statamic\Http\Resources\API\UserResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 

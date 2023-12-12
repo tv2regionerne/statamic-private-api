@@ -12,7 +12,7 @@ return [
         'users' => false,
     ],
 
-    'route' => env('PRIVATE_API_ROUTE', 'api'),
+    'route' => env('PRIVATE_API_ROUTE', 'api/private'),
 
     'middleware' => env('PRIVATE_API_MIDDLEWARE', 'api'),
 ];

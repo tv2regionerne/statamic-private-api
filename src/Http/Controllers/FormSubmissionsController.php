@@ -5,7 +5,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\Cp\Forms\FormSubmissionsController as CpController;
+use Statamic\Http\Controllers\CP\Forms\FormSubmissionsController as CpController;
 use Statamic\Query\ItemQueryBuilder;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\FormSubmissionResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
