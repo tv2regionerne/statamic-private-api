@@ -4,12 +4,8 @@
 > The routes should be protected by Laravel Passport, Sanctum or similar.
 
 ## Features
-
-This addon does:
-
-- This
-- And this
-- And even this
+Add's private API seperated from the Public API build into statamic.  
+Uses Laravel's build in auth guards, so you may use Laravel Passport, Laravel Sanctum or something else.
 
 ## How to Install
 
@@ -31,4 +27,4 @@ composer require tv2regionerne/statamic-private-api
 
 ## How to Use
 
-Here's where you can explain how to use this wonderful addon.
+Update the config to enable private API's.
