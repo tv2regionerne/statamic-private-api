@@ -2,7 +2,7 @@
 
 namespace Tv2regionerne\StatamicPrivateApi\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class FormSubmissionResource extends JsonResource
 {

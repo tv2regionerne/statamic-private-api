@@ -19,6 +19,7 @@ class AssetContainersController extends ApiController
         abort_if(! $this->resourcesAllowed('assets', ''), 404);
 
         $query = (new ItemQueryBuilder)->withItems(Facades\AssetContainer::all());
+
         return AssetContainerResource::collection(
             $this->filterSortAndPaginate($query)
         );

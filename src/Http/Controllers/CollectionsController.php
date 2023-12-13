@@ -19,6 +19,7 @@ class CollectionsController extends ApiController
         abort_if(! $this->resourcesAllowed('collections', ''), 404);
 
         $query = (new ItemQueryBuilder)->withItems(Facades\Collection::all());
+
         return CollectionResource::collection(
             $this->filterSortAndPaginate($query)
         );

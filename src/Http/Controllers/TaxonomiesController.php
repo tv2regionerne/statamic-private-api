@@ -19,6 +19,7 @@ class TaxonomiesController extends ApiController
         abort_if(! $this->resourcesAllowed('taxonomies', ''), 404);
 
         $query = (new ItemQueryBuilder)->withItems(Facades\Taxonomy::all());
+
         return TaxonomyResource::collection(
             $this->filterSortAndPaginate($query)
         );

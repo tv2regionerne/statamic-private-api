@@ -2,7 +2,7 @@
 
 namespace Tv2regionerne\StatamicPrivateApi\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class CollectionResource extends JsonResource
 {
@@ -14,8 +14,8 @@ class CollectionResource extends JsonResource
     public function toArray($request)
     {
         return array_merge([
-                'handle' => $this->resource->handle(),
-            ], $this->resource->fileData()
+            'handle' => $this->resource->handle(),
+        ], $this->resource->fileData()
         );
     }
 }

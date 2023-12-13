@@ -19,6 +19,7 @@ class NavsController extends ApiController
         abort_if(! $this->resourcesAllowed('navs', ''), 404);
 
         $query = (new ItemQueryBuilder)->withItems(Facades\Collection::all());
+
         return NavResource::collection(
             $this->filterSortAndPaginate($query)
         );

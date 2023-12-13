@@ -12,15 +12,15 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        if (!config('private-api.enabled'))
-        {
+        if (! config('private-api.enabled')) {
             abort(404);
         }
     }
 
-    public function resourcesAllowed(string $type, string $key): bool {
-        $resources = config('private-api.resources.'. $type);
-        if (!$resources) {
+    public function resourcesAllowed(string $type, string $key): bool
+    {
+        $resources = config('private-api.resources.'.$type);
+        if (! $resources) {
             return false;
         }
 

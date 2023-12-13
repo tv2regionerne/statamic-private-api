@@ -19,6 +19,7 @@ class GlobalsController extends ApiController
         abort_if(! $this->resourcesAllowed('globals', ''), 404);
 
         $query = (new ItemQueryBuilder)->withItems(Facades\GlobalSet::all());
+
         return GlobalResource::collection(
             $this->filterSortAndPaginate($query)
         );

@@ -1,18 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 Route::prefix(config('private-api.route'))
     ->middleware(config('private-api.middleware'))
-    ->group(function() {
+    ->group(function () {
 
         Route::name('private.')
             ->middleware('auth:api')
-            ->group(function() {
+            ->group(function () {
 
-                Route::get('/ping', function(\Illuminate\Http\Request $request) {
+                Route::get('/ping', function (Illuminate\Http\Request $request) {
                     return $request->user();
                 });
 
@@ -166,9 +165,9 @@ Route::prefix(config('private-api.route'))
                         Route::delete('{id}', [Controllers\UsersController::class, 'destroy']);
                     });
 
-//
-//            Route::name('assets.index')->get('assets/{asset_container}', [AssetsController::class, 'index']);
-//            Route::name('assets.show')->get('assets/{asset_container}/{asset}', [AssetsController::class, 'show'])->where('asset', '.*');
+                //
+                //            Route::name('assets.index')->get('assets/{asset_container}', [AssetsController::class, 'index']);
+                //            Route::name('assets.show')->get('assets/{asset_container}/{asset}', [AssetsController::class, 'show'])->where('asset', '.*');
 
-        });
+            });
     });

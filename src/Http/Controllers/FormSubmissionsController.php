@@ -19,6 +19,7 @@ class FormSubmissionsController extends ApiController
         $form = $this->formFromHandle($form);
 
         $query = (new ItemQueryBuilder)->withItems($form->submissions());
+
         return FormSubmissionResource::collection(
             $this->filterSortAndPaginate($query)
         );

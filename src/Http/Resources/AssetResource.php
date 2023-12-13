@@ -2,7 +2,6 @@
 
 namespace Tv2regionerne\StatamicPrivateApi\Http\Resources;
 
-use Illuminate\Support\Facades\Crypt;
 use Statamic\Http\Resources\API\AssetResource as StatamicResource;
 
 class AssetResource extends StatamicResource

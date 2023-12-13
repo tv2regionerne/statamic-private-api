@@ -1,4 +1,5 @@
 <?php
+
 return [
     'enabled' => env('PRIVATE_API_ENABLED', false),
 

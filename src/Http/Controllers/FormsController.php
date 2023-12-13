@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Forms\FormsController as CpController;
-use Statamic\Query\ItemQueryBuilder;
 use Statamic\Http\Resources\API\FormResource;
+use Statamic\Query\ItemQueryBuilder;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 
 class FormsController extends ApiController
@@ -19,6 +19,7 @@ class FormsController extends ApiController
         abort_if(! $this->resourcesAllowed('forms', ''), 404);
 
         $query = (new ItemQueryBuilder)->withItems(Facades\Form::all());
+
         return app(FormResource::class)::collection(
             $this->filterSortAndPaginate($query)
         );
