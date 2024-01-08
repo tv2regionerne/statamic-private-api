@@ -5,9 +5,14 @@
 
 ## Features
 Add's private API seperated from the Public API build into statamic.  
-Uses Laravel's build in auth guards, so you may use Laravel Passport, Laravel Sanctum or something else.
+Uses Laravel's build in auth guards, so you may use Laravel Passport, Laravel Sanctum or something else.  
+Permissions will foloww the permissions assigned to the user inside of Statamic.
 
 See https://statamic.com/addons/tv2reg/laravel-passport-ui for Laravel Passport integration into Statamic.
+
+## Limitations
+The Private API uses the Statamic CP controllers.  
+PATCH requestst will be handled as a PUT, so ensure to send the full object for any updates.
 
 ## How to Install
 
