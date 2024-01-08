@@ -1,6 +1,13 @@
 # Statamic Private Api
 
-> Statamic Private Api is a Statamic addon that enables a private REST API.
+<!-- statamic:hide -->
+[![Packagist](https://img.shields.io/packagist/v/tv2regionerne/statamic-passport.svg?style=flat-square)](https://packagist.org/packages/tv2regionerne/statamic-passport)
+[![Downloads](https://img.shields.io/packagist/dt/tv2regionerne/statamic-passport.svg?style=flat-square)](https://packagist.org/packages/tv2regionerne/statamic-passport)
+[![License](https://img.shields.io/github/license/tv2regionerne/statamic-passport.svg?style=flat-square)](LICENSE)
+[![Supported Statamic version](https://img.shields.io/badge/Statamic-4.0%2B-FF269E)](https://github.com/statamic/cms/releases)
+<!-- /statamic:hide -->
+
+> Statamic Private Api is a Statamic addon that enables a private REST API.  
 > The routes should be protected by Laravel Passport, Sanctum or similar.
 
 ## Features
@@ -12,7 +19,9 @@ See https://statamic.com/addons/tv2reg/laravel-passport-ui for Laravel Passport 
 
 ## Limitations
 The Private API uses the Statamic CP controllers.  
-PATCH requestst will be handled as a PUT, so ensure to send the full object for any updates.
+PATCH requestst will be handled as a PUT, so ensure to send the full object for any updates.  
+Asset upload is not implemented.  
+Collection Entry revisions is not implemented. 
 
 ## How to Install
 
@@ -40,15 +49,10 @@ Below example is using Laravel Passport for api authentication.
 
 ## How to Use
 
-Update the config to enable private API's.
+Update the config or env to enable private API's.
 
 Configure your .env with the following values to enable the private API with a prefix on "api/private".
 ```env
 PRIVATE_API_ENABLED=true
 PRIVATE_API_ROUTE="api/private"
 ```
-This will enable routes on 
-* ```/api/private/asset-containers```
-* ```/api/private/globals```
-* ```/api/private/collections```
-* ```/api/private/forms```
