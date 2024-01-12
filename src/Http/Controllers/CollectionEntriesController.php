@@ -49,7 +49,7 @@ class CollectionEntriesController extends ApiController
         $entry = $this->entryFromId($entry);
 
         $this->abortIfInvalid($entry, $collection);
-        
+
         // cp controller expects the full payload, so merge from existing values
         $request->merge($entry->blueprint()->fields()->values()->except($request->keys())->all());
 

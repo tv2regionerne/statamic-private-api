@@ -42,7 +42,7 @@ class CollectionsController extends ApiController
     public function update(Request $request, $collection)
     {
         $collection = $this->collectionFromHandle($collection);
-        
+
         return (new CpController($request))->update($request, $collection);
     }
 

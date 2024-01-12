@@ -43,13 +43,13 @@ class UsersController extends ApiController
     public function update(Request $request, $id)
     {
         abort_if(! $this->resourcesAllowed('users', ''), 404);
-        
+
         if (! $user = Facades\User::find($id)) {
             abort(404);
         }
-        
+
         $request->merge($user->blueprint()->fields()->values()->except($request->keys())->all());
-        
+
         if (! $request->input('email')) {
             $request->merge(['email' => $user->email()]);
         }

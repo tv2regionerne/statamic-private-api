@@ -23,7 +23,7 @@ class GlobalVariablesController extends ApiController
     public function update(Request $request, $global)
     {
         $global = $this->globalFromHandle($global);
-        
+
         // cp controller expects the full payload, so merge from existing values
         $request->merge($global->blueprint()->fields()->values()->except($request->keys())->all());
 
