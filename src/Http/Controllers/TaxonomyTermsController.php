@@ -49,6 +49,9 @@ class TaxonomyTermsController extends ApiController
         $term = $this->termFromSlug($term, $taxonomy);
 
         $this->abortIfInvalid($term, $taxonomy);
+        
+        // cp controller expects the full payload, so merge from existing values
+        $request->merge($term->blueprint()->fields()->values()->except($request->keys())->all());
 
         return (new CpController($request))->update($request, $taxonomy, $term, Facades\Site::current());
     }
