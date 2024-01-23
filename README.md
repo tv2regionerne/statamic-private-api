@@ -19,8 +19,6 @@ See https://statamic.com/addons/tv2reg/laravel-passport-ui for Laravel Passport 
 
 ## Limitations
 The Private API uses the Statamic CP controllers.  
-PATCH requestst will be handled as a PUT, so ensure to send the full object for any updates.  
-Asset upload is not implemented.  
 Collection Entry revisions is not implemented. 
 
 ## How to Install
