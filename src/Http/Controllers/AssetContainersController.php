@@ -43,7 +43,10 @@ class AssetContainersController extends ApiController
     {
         $container = $this->containerFromHandle($container);
 
-        return (new CpController($request))->update($container, $request);
+        // cp controller expects the full payload, so merge from existing values
+        $request->merge($container->blueprint()->fields()->values()->except($request->keys())->all());
+
+        return (new CpController($request))->update($request, $container);
     }
 
     public function destroy(Request $request, $container)
