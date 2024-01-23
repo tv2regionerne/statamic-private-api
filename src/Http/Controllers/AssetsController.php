@@ -39,24 +39,24 @@ class AssetsController extends ApiController
 
         return AssetResource::make($asset);
     }
-    
+
     public function store(Request $request, $container)
     {
         $request->merge([
             'container' => $container,
         ]);
-        
+
         if ($file = $request->input('file_url')) {
             $contents = file_get_contents($file);
-            
+
             if (! $contents) {
-                abort(406);    
+                abort(406);
             }
-            
+
             $filename = Str::afterLast($file, '/');
             Storage::disk('local')->put('tmp/'.$filename, $contents);
-            
-            $request->files->set('file', new UploadedFile(storage_path('tmp/'.$filename), $filename));            
+
+            $request->files->set('file', new UploadedFile(storage_path('tmp/'.$filename), $filename));
         }
 
         return (new CpController($request))->store($request);
