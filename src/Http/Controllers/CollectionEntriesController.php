@@ -52,7 +52,7 @@ class CollectionEntriesController extends ApiController
 
         // cp controller expects the full payload, so merge from existing values
         $request->merge($entry->blueprint()->fields()->addValues($entry->data()->all())->values()->except($request->keys())->all());
-        
+
         if ($entry->collection()->dated() && ! $request->input('date')) {
             $request->merge(['date' => $entry->date()]);
         }
