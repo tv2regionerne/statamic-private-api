@@ -48,7 +48,7 @@ class UsersController extends ApiController
             abort(404);
         }
 
-        $request->merge($user->blueprint()->fields()->values()->except($request->keys())->all());
+        $request->merge($user->blueprint()->fields()->addValues($user->data()->all())->values()->except($request->keys())->all());
 
         if (! $request->input('email')) {
             $request->merge(['email' => $user->email()]);
