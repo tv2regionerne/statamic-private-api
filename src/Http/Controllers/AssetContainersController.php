@@ -45,7 +45,7 @@ class AssetContainersController extends ApiController
 
         // cp controller expects the full payload, so merge with existing values
         $mergedData = collect($container->fileData())->merge($request->all());
-         
+
         $request->merge($mergedData->all());
 
         return (new CpController($request))->update($request, $container);

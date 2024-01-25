@@ -49,29 +49,29 @@ class CollectionEntriesController extends ApiController
         $entry = $this->entryFromId($entry);
 
         $this->abortIfInvalid($entry, $collection);
-        
-        // cp controller expects the full payload, so merge with existing values        
-        $mergedData = $this->mergeBlueprintAndRequestData($entry->blueprint(), $entry->data(), $request);    
-                
+
+        // cp controller expects the full payload, so merge with existing values
+        $mergedData = $this->mergeBlueprintAndRequestData($entry->blueprint(), $entry->data(), $request);
+
         if ($entry->collection()->dated() && ($mergedData->get('date') === null)) {
             $mergedData = $mergedData->merge([
                 'date' => [
                     'date' => $entry->date()->format('Y-m-d'),
-                    'time' => $entry->date()->format('H:i')
-                ]
+                    'time' => $entry->date()->format('H:i'),
+                ],
             ]);
         }
-        
+
         if ($mergedData->get('published') === null) {
             $mergedData = $mergedData->merge(['published' => $entry->published()]);
         }
-        
+
         if ($mergedData->get('slug') === null) {
             $mergedData = $mergedData->merge(['slug' => $entry->slug()]);
         }
-        
+
         $request->merge($mergedData->all());
-                
+
         return (new CpController($request))->update($request, $collection, $entry);
     }
 

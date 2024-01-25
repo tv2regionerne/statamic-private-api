@@ -11,33 +11,33 @@ trait VerifiesPrivateAPI
     public function mergeBlueprintAndRequestData(Blueprint $blueprint, Collection $existingData, Request $request): Collection
     {
         $fields = $blueprint->fields();
-                
+
         $fields->all()->each(function ($field) use ($existingData, $request) {
             $handle = $field->handle();
-            
+
             $data = null;
-            
+
             if ($existingData->has($handle)) {
                 $data = $existingData->get($handle);
             }
-            
+
             if ($request->has($handle)) {
                 $data = $request->input($handle);
             }
-            
+
             if ($data === null) {
                 return;
             }
-            
+
             $data = match ($field->type()) {
                 'bard' => is_string($data) ? $data : json_encode($data),
                 default => $data
-            }; 
-            
+            };
+
             $existingData->put($handle, $data);
         });
-        
-        return $existingData;   
+
+        return $existingData;
     }
 
     public function resourcesAllowed(string $type, string $key): bool
