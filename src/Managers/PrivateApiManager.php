@@ -2,14 +2,23 @@
 
 namespace Tv2regionerne\StatamicPrivateApi\Managers;
 
+use Closure;
+
 class PrivateApiManager
 {
-    protected static $additionalRoutes = [];
+    protected array $additionalRoutes = [];
 
-    public static function additionalRoutes()
+    public function additionalRoutes()
     {
-        foreach (static::$additionalRoutes as $routes) {
+        foreach ($this->additionalRoutes as $routes) {
             $routes();
         }
+    }
+    
+    public function addRoute(Closure $route)
+    {
+        $this->additionalRoutes[] = $route;
+        
+        return $this;
     }
 }
