@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Tv2regionerne\StatamicPrivateApi\Facades\PrivateApi;
 use Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 Route::prefix(config('private-api.route'))
@@ -171,4 +172,6 @@ Route::prefix(config('private-api.route'))
                 //            Route::name('assets.show')->get('assets/{asset_container}/{asset}', [AssetsController::class, 'show'])->where('asset', '.*');
 
             });
+
+        PrivateApi::additionalRoutes();
     });
