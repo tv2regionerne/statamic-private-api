@@ -14,11 +14,11 @@ class PrivateApiManager
             $routes();
         }
     }
-    
+
     public function addRoute(Closure $route)
     {
         $this->additionalRoutes[] = $route;
-        
+
         return $this;
     }
 }
