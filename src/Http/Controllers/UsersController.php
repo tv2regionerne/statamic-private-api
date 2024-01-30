@@ -48,11 +48,26 @@ class UsersController extends ApiController
             abort(404);
         }
 
-        $request->merge($user->blueprint()->fields()->values()->except($request->keys())->all());
+        // cp controller expects the full payload, so merge with existing values
+        $mergedData = $this->mergeBlueprintAndRequestData($user->blueprint(), $user->data(), $request);
 
-        if (! $request->input('email')) {
-            $request->merge(['email' => $user->email()]);
+        if (! $mergedData->get('email')) {
+            $mergedData = $mergedData->merge(['email' => $user->email()]);
         }
+
+        if (! $mergedData->get('name')) {
+            $mergedData = $mergedData->merge(['name' => $user->name()]);
+        }
+
+        if (! $mergedData->get('roles')) {
+            $mergedData = $mergedData->merge(['roles' => $user->roles()->map->handle()->all()]);
+        }
+
+        if (! $mergedData->get('groups')) {
+            $mergedData = $mergedData->merge(['groups' => $user->groups()->map->handle()->all()]);
+        }
+
+        $request->merge($mergedData->all());
 
         return (new CpController($request))->update($request, $id);
     }
