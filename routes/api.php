@@ -170,7 +170,7 @@ Route::prefix(config('private-api.route'))
                 //
                 //            Route::name('assets.index')->get('assets/{asset_container}', [AssetsController::class, 'index']);
                 //            Route::name('assets.show')->get('assets/{asset_container}/{asset}', [AssetsController::class, 'show'])->where('asset', '.*');
-                
+
                 PrivateApi::additionalRoutes();
             });
     });
