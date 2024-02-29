@@ -1,0 +1,3 @@
+- [Statamic Private API](README.md)
+- [Addons](addons.md)
+- [License](LICENSE.md)
