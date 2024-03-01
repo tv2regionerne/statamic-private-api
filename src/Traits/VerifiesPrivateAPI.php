@@ -31,6 +31,8 @@ trait VerifiesPrivateAPI
 
             $data = match ($field->type()) {
                 'bard' => is_string($data) ? $data : json_encode($data),
+                'assets' => is_string($data) ? [$data] : $data,
+                'entries' => is_string($data) ? [$data] : $data,
                 default => $data
             };
 
