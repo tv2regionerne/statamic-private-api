@@ -56,6 +56,7 @@ class CollectionEntriesController extends ApiController
         $request->merge($originalData->all());
 
         $response = (new CpController($request))->update($request, $collection, $entry);
+
         return app(EntryResource::class)::make($entry);
     }
 

@@ -55,6 +55,7 @@ class UsersController extends ApiController
         $request->merge($originalData->all());
 
         $response = (new CpController($request))->update($request, $id);
+
         return app(UserResource::class)::make($user);
     }
 
