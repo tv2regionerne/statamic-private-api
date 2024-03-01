@@ -25,9 +25,10 @@ class GlobalVariablesController extends ApiController
         $global = $this->globalFromHandle($global);
 
         // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($global->blueprint(), $global->data(), $request);
+        $originalData = collect((new CpController($request))->edit($request, $global->id())->get('values'))->filter();
+        $originalData = $originalData->merge($request->all());
 
-        $request->merge($mergedData->all());
+        $request->merge($originalData->all());
 
         return (new CpController($request))->update($request, $global->handle());
     }
