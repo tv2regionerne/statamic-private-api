@@ -51,9 +51,10 @@ class TaxonomyTermsController extends ApiController
         $this->abortIfInvalid($term, $taxonomy);
 
         // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($term->blueprint(), $term->data(), $request);
+        $originalData = collect((new CpController($request))->edit($request, $taxonomy, $term)->get('values'))->filter();
+        $originalData = $originalData->merge($request->all());
 
-        $request->merge($mergedData->all());
+        $request->merge($originalData->all());
 
         return (new CpController($request))->update($request, $taxonomy, $term, Facades\Site::current());
     }

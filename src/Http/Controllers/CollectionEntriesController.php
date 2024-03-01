@@ -50,29 +50,13 @@ class CollectionEntriesController extends ApiController
 
         $this->abortIfInvalid($entry, $collection);
 
-        // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($entry->blueprint(), $entry->data(), $request);
+        $originalData = collect((new CpController($request))->edit($request, $collection, $entry)->get('values'))->filter();
+        $originalData = $originalData->merge($request->all());
 
-        if ($entry->collection()->dated() && ($mergedData->get('date') === null)) {
-            $mergedData = $mergedData->merge([
-                'date' => [
-                    'date' => $entry->date()->format('Y-m-d'),
-                    'time' => $entry->date()->format('H:i'),
-                ],
-            ]);
-        }
+        $request->merge($originalData->all());
 
-        if ($mergedData->get('published') === null) {
-            $mergedData = $mergedData->merge(['published' => $entry->published()]);
-        }
-
-        if ($mergedData->get('slug') === null) {
-            $mergedData = $mergedData->merge(['slug' => $entry->slug()]);
-        }
-
-        $request->merge($mergedData->all());
-
-        return (new CpController($request))->update($request, $collection, $entry);
+        $response = (new CpController($request))->update($request, $collection, $entry);
+        return app(EntryResource::class)::make($entry);
     }
 
     public function destroy(Request $request, $collection, $entry)

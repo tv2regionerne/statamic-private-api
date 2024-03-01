@@ -49,30 +49,16 @@ class UsersController extends ApiController
         }
 
         // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($user->blueprint(), $user->data(), $request);
+        $originalData = collect((new CpController($request))->edit($request, $user)->get('values'))->filter();
+        $originalData = $originalData->merge($request->all());
 
-        if (! $mergedData->get('email')) {
-            $mergedData = $mergedData->merge(['email' => $user->email()]);
-        }
+        $request->merge($originalData->all());
 
-        if (! $mergedData->get('name')) {
-            $mergedData = $mergedData->merge(['name' => $user->name()]);
-        }
-
-        if (! $mergedData->get('roles')) {
-            $mergedData = $mergedData->merge(['roles' => $user->roles()->map->handle()->all()]);
-        }
-
-        if (! $mergedData->get('groups')) {
-            $mergedData = $mergedData->merge(['groups' => $user->groups()->map->handle()->all()]);
-        }
-
-        $request->merge($mergedData->all());
-
-        return (new CpController($request))->update($request, $id);
+        $response = (new CpController($request))->update($request, $id);
+        return app(UserResource::class)::make($user);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         abort_if(! $this->resourcesAllowed('users', ''), 404);
 
