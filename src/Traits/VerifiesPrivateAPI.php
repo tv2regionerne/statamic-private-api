@@ -30,17 +30,17 @@ trait VerifiesPrivateAPI
             }
 
             // add a prefix to the data if there's only a single term
-            if ($field->type() === 'terms' && is_string($data) && count($field->config()['taxonomies']) === 1 ) {
-                $data = $field->config()['taxonomies'][0] .'::'. $data;
+            if ($field->type() === 'terms' && is_string($data) && count($field->config()['taxonomies']) === 1) {
+                $data = $field->config()['taxonomies'][0].'::'.$data;
             }
 
             // add a container prefix to the assets
             if (in_array($field->type(), ['assets', 'advanced_assets'])) {
                 if (is_string($data)) {
-                    $data = $field->config()['container'] .'::'. $data;
+                    $data = $field->config()['container'].'::'.$data;
                 } else {
-                    $data = collect($data)->transform(function($asset) use ($field) {
-                        return $field->config()['container'] .'::'. $asset;
+                    $data = collect($data)->transform(function ($asset) use ($field) {
+                        return $field->config()['container'].'::'.$asset;
                     })->toArray();
                 }
             }
