@@ -4,6 +4,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Traits;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 use Statamic\Fields\Blueprint;
 
 trait VerifiesPrivateAPI
@@ -78,5 +79,13 @@ trait VerifiesPrivateAPI
         }
 
         return false;
+    }
+    
+    public function returnValidationErrors(ValidationException $e)
+    {
+        return response()->json([
+            'error' => true,
+            'errors' => $e->errors(),
+        ], 422);
     }
 }

@@ -4,6 +4,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\EntriesController as CpController;
@@ -41,7 +42,11 @@ class CollectionEntriesController extends ApiController
     {
         $collection = $this->collectionFromHandle($collection);
 
-        $response = (new CpController($request))->store($request, $collection, Facades\Site::current());
+        try {
+            $response = (new CpController($request))->store($request, $collection, Facades\Site::current());
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
             
         if (! $id = Arr::get($response, 'data.id')) {
             abort(403);    
@@ -66,7 +71,11 @@ class CollectionEntriesController extends ApiController
 
         $request->merge($originalData->all());
 
-        $response = (new CpController($request))->update($request, $collection, $entry);
+        try {
+            $response = (new CpController($request))->update($request, $collection, $entry);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
         
         if (! $id = Arr::get($response, 'data.id')) {
             abort(403);    

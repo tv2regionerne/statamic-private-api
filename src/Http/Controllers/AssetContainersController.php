@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Assets\AssetContainersController as CpController;
@@ -34,21 +35,33 @@ class AssetContainersController extends ApiController
 
     public function store(Request $request)
     {
-        abort_if(! $this->resourcesAllowed('assets', ''), 404);
-
-        return (new CpController($request))->store($request);
+        try {
+            (new CpController($request))->store($request);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
+        
+        $container = $this->containerFromHandle($request->input('handle'));
+        
+        return AssetContainerResource::make($container);
     }
 
-    public function update(Request $request, $container)
+    public function update(Request $request, $handle)
     {
-        $container = $this->containerFromHandle($container);
+        $container = $this->containerFromHandle($handle);
 
         // cp controller expects the full payload, so merge with existing values
         $mergedData = collect($container->fileData())->merge($request->all());
 
         $request->merge($mergedData->all());
 
-        return (new CpController($request))->update($request, $container);
+        try {
+            (new CpController($request))->update($request, $container);
+            
+            return AssetContainerResource::make($this->containerFromHandle($handle));
+        } catch (ValidationException $e) {
+            return $e;
+        }
     }
 
     public function destroy(Request $request, $container)

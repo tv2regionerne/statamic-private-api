@@ -17,22 +17,24 @@ Route::prefix(config('private-api.route'))
 
                 // assets
                 Route::prefix('/asset-containers')
+                    ->name('asset-containers.')
                     ->group(function () {
-                        Route::get('/', [Controllers\AssetContainersController::class, 'index']);
-                        Route::post('/', [Controllers\AssetContainersController::class, 'store']);
+                        Route::get('/', [Controllers\AssetContainersController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\AssetContainersController::class, 'store'])->name('store');
 
                         Route::prefix('/{asset_container}')
                             ->group(function () {
-                                Route::get('/', [Controllers\AssetContainersController::class, 'show']);
-                                Route::patch('/', [Controllers\AssetContainersController::class, 'update']);
-                                Route::delete('/', [Controllers\AssetContainersController::class, 'destroy']);
+                                Route::get('/', [Controllers\AssetContainersController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\AssetContainersController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\AssetContainersController::class, 'destroy'])->name('destroy');
 
                                 Route::prefix('/assets')
+                                    ->name('assets.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\AssetsController::class, 'index']);
-                                        Route::get('{id}', [Controllers\AssetsController::class, 'show']);
-                                        Route::delete('{id}', [Controllers\AssetsController::class, 'destroy']);
-                                        Route::post('/', [Controllers\AssetsController::class, 'store']);
+                                        Route::get('/', [Controllers\AssetsController::class, 'index'])->name('index');
+                                        Route::get('{id}', [Controllers\AssetsController::class, 'show'])->name('show');
+                                        Route::delete('{id}', [Controllers\AssetsController::class, 'destroy'])->name('destroy');
+                                        Route::post('/', [Controllers\AssetsController::class, 'store'])->name('store');
                                     });
                             });
                     });

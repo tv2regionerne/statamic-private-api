@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\CollectionsController as CpController;
@@ -34,7 +35,11 @@ class CollectionsController extends ApiController
 
     public function store(Request $request)
     {
-        (new CpController($request))->store($request);
+        try {
+            (new CpController($request))->store($request);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
         
         $collection = $this->collectionFromHandle($request->input('handle'));
         
@@ -49,7 +54,11 @@ class CollectionsController extends ApiController
 
         $request->merge($originalData->all());
 
-        (new CpController($request))->update($request, $collection);
+        try {
+            (new CpController($request))->update($request, $collection);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
         
         $collection = $this->collectionFromHandle($handle);
         

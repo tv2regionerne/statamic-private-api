@@ -94,3 +94,18 @@ it('creates a collection', function () {
     $this->assertSame('test', array_get($json, 'data.title'));
     $this->assertSame('test', Facades\Collection::all()->first()->title());
 });
+
+it('returns validation errors when creating a collection', function () {
+    Event::fake();
+        
+    $this->actingAs(makeUser());
+    
+    $this->assertCount(0, Facades\Collection::all());
+    
+    $response = $this->post(route('private.collections.store'), [
+        'something' => 'test',
+    ]);
+        
+    $response->assertStatus(422);
+    $response->assertSee('The title field is required');
+});

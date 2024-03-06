@@ -127,3 +127,20 @@ it('creates an entry', function () {
     $this->assertSame('test', array_get($json, 'data.title'));
     $this->assertSame('test', Facades\Entry::all()->first()->get('title'));
 });
+
+it('returns validation errors when creating an entry', function () {
+    Event::fake();
+
+    $collection = tap(Facades\Collection::make('test'))->save();
+        
+    $this->actingAs(makeUser());
+    
+    $this->assertCount(0, Facades\Entry::all());
+    
+    $response = $this->post(route('private.collections.entries.store', ['collection' => $collection->handle()]), [
+        'nothing' => 'test',
+    ]);
+        
+    $response->assertStatus(422);
+    $response->assertSee('The Title field is required');
+});
