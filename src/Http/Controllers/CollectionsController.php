@@ -34,8 +34,6 @@ class CollectionsController extends ApiController
 
     public function store(Request $request)
     {
-        abort_if(! $this->resourcesAllowed('collections', ''), 404);
-
         (new CpController($request))->store($request);
         
         $collection = $this->collectionFromHandle($request->input('handle'));

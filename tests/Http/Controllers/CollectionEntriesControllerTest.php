@@ -100,7 +100,7 @@ it('gets deletes an entry', function () {
     
     $this->assertCount(1, Facades\Entry::all());
 
-    $response = $this->delete(route('private.collections.entries.update', ['collection' => $collection->handle(), 'entry' => $entry1->id()]));
+    $response = $this->delete(route('private.collections.entries.destroy', ['collection' => $collection->handle(), 'entry' => $entry1->id()]));
         
     $response->assertStatus(204);
     
