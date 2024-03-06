@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Assets\AssetsController as CpController;
@@ -30,7 +31,7 @@ class AssetsController extends ApiController
         $id = $this->idFromCrypt($id);
 
         $container = $this->containerFromHandle($container);
-
+        
         $asset = $container->asset($id);
 
         if (! $asset) {
@@ -59,7 +60,11 @@ class AssetsController extends ApiController
             $request->files->set('file', new UploadedFile(storage_path('tmp/'.$filename), $filename));
         }
 
-        return (new CpController($request))->store($request);
+        try {
+            (new CpController($request))->store($request);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function destroy(Request $request, $container, $id)
@@ -72,7 +77,7 @@ class AssetsController extends ApiController
             abort(404);
         }
 
-        return (new CpController($request))->destroy($id);
+        return (new CpController($request))->destroy(base64_encode($asset->id()));
     }
 
     private function containerFromHandle($container)
@@ -90,7 +95,9 @@ class AssetsController extends ApiController
 
     private function idFromCrypt($id)
     {
-        $id = base64_decode($id);
+        if (! str_contains($id, '::')) {
+            $id = base64_decode($id);
+        }
 
         return Str::after($id, '::');
     }
