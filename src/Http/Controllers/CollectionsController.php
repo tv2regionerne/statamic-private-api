@@ -36,14 +36,26 @@ class CollectionsController extends ApiController
     {
         abort_if(! $this->resourcesAllowed('collections', ''), 404);
 
-        return (new CpController($request))->store($request);
+        (new CpController($request))->store($request);
+        
+        $collection = $this->collectionFromHandle($request->input('handle'));
+        
+        return CollectionResource::make($collection);
     }
 
-    public function update(Request $request, $collection)
+    public function update(Request $request, $handle)
     {
-        $collection = $this->collectionFromHandle($collection);
+        $collection = $this->collectionFromHandle($handle);
+        
+        $originalData = collect($collection->fileData())->merge($request->all());
 
-        return (new CpController($request))->update($request, $collection);
+        $request->merge($originalData->all());
+
+        (new CpController($request))->update($request, $collection);
+        
+        $collection = $this->collectionFromHandle($handle);
+        
+        return CollectionResource::make($collection);
     }
 
     public function destroy(Request $request, $collection)

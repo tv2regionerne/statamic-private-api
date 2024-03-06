@@ -9,7 +9,6 @@ Route::prefix(config('private-api.route'))
     ->group(function () {
 
         Route::name('private.')
-            ->middleware('auth:api')
             ->group(function () {
 
                 Route::get('/ping', function (Illuminate\Http\Request $request) {
@@ -40,25 +39,27 @@ Route::prefix(config('private-api.route'))
 
                 // collections
                 Route::prefix('/collections')
+                    ->name('collections.')
                     ->group(function () {
-                        Route::get('/', [Controllers\CollectionsController::class, 'index']);
-                        Route::post('/', [Controllers\CollectionsController::class, 'store']);
+                        Route::get('/', [Controllers\CollectionsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\CollectionsController::class, 'store'])->name('store');
 
                         // individual collection
                         Route::prefix('/{collection}')
                             ->group(function () {
-                                Route::get('/', [Controllers\CollectionsController::class, 'show']);
-                                Route::patch('/', [Controllers\CollectionsController::class, 'update']);
-                                Route::delete('/', [Controllers\CollectionsController::class, 'destroy']);
+                                Route::get('/', [Controllers\CollectionsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\CollectionsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\CollectionsController::class, 'destroy'])->name('destroy');
 
                                 // collection entries
                                 Route::prefix('/entries')
+                                    ->name('entries.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\CollectionEntriesController::class, 'index']);
-                                        Route::get('{entry}', [Controllers\CollectionEntriesController::class, 'show']);
-                                        Route::post('/', [Controllers\CollectionEntriesController::class, 'store']);
-                                        Route::patch('{entry}', [Controllers\CollectionEntriesController::class, 'update']);
-                                        Route::delete('{entry}', [Controllers\CollectionEntriesController::class, 'destroy']);
+                                        Route::get('/', [Controllers\CollectionEntriesController::class, 'index'])->name('index');
+                                        Route::get('{entry}', [Controllers\CollectionEntriesController::class, 'show'])->name('show');
+                                        Route::post('/', [Controllers\CollectionEntriesController::class, 'store'])->name('store');
+                                        Route::patch('{entry}', [Controllers\CollectionEntriesController::class, 'update'])->name('update');
+                                        Route::delete('{entry}', [Controllers\CollectionEntriesController::class, 'destroy'])->name('destroy');
                                     });
 
                                 // collection tree

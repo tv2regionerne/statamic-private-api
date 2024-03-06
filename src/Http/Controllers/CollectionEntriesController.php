@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\EntriesController as CpController;
@@ -40,7 +41,15 @@ class CollectionEntriesController extends ApiController
     {
         $collection = $this->collectionFromHandle($collection);
 
-        return (new CpController($request))->store($request, $collection, Facades\Site::current());
+        $response = (new CpController($request))->store($request, $collection, Facades\Site::current());
+            
+        if (! $id = Arr::get($response, 'data.id')) {
+            abort(403);    
+        }
+        
+        $entry = $this->entryFromId($id);
+            
+        return app(EntryResource::class)::make($entry);
     }
 
     public function update(Request $request, $collection, $entry)
@@ -49,6 +58,8 @@ class CollectionEntriesController extends ApiController
         $entry = $this->entryFromId($entry);
 
         $this->abortIfInvalid($entry, $collection);
+        
+        $request->headers->add(['accept' => 'application/json']);
 
         $originalData = collect((new CpController($request))->edit($request, $collection, $entry)->get('values'))->filter();
         $originalData = $originalData->merge($request->all());
@@ -56,6 +67,12 @@ class CollectionEntriesController extends ApiController
         $request->merge($originalData->all());
 
         $response = (new CpController($request))->update($request, $collection, $entry);
+        
+        if (! $id = Arr::get($response, 'data.id')) {
+            abort(403);    
+        }
+        
+        $entry = $this->entryFromId($id);
 
         return app(EntryResource::class)::make($entry);
     }

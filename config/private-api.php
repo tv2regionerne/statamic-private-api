@@ -15,5 +15,5 @@ return [
 
     'route' => env('PRIVATE_API_ROUTE', 'api/private'),
 
-    'middleware' => env('PRIVATE_API_MIDDLEWARE', 'api'),
+    'middleware' => env('PRIVATE_API_MIDDLEWARE', 'auth:api'),
 ];
