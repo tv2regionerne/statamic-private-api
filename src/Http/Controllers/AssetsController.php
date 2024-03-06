@@ -4,6 +4,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -61,7 +62,15 @@ class AssetsController extends ApiController
         }
 
         try {
-            (new CpController($request))->store($request);
+            $response = (new CpController($request))->store($request);
+                        
+            if (! $id = $response->id()) {
+                abort(403);    
+            }
+            
+            $asset = Facades\Asset::find($id);
+            
+            return AssetResource::make($asset);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }

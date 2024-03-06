@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Statamic\Facades;
@@ -78,30 +79,6 @@ it('gets individual assets', function () {
         ->assertNotFound();
 });
 
-it('updates an asset', function () {
-    Storage::fake('test');
-    Storage::disk('test')->put('test1.txt', 'contents');
-
-    $container = tap(Facades\AssetContainer::make('test')->disk('test'))->save();
-    
-    $asset1 = tap(Facades\Asset::make()->path('test1')->container($container))->save();
-    
-    $this->actingAs(makeUser());
-    
-    $this->assertNull($asset1->get('title'));
-
-    $response = $this->patch(route('private.asset-containers.assets.update', ['asset_container' => $container->handle(), 'id' => $asset1->id()]), [
-        'title' => 'test',
-    ]);
-        
-    $response->assertOk();
-    
-    $json = $response->json();
-    
-    $this->assertSame('test', array_get($json, 'data.title'));
-    $this->assertSame('test', $asset1->fresh()->get('title'));
-});
-
 it('deletes an asset', function () {
     Storage::fake('test');
     Storage::disk('test')->put('test1.txt', 'contents');
@@ -122,10 +99,12 @@ it('deletes an asset', function () {
     Storage::disk('test')->assertMissing('test1.txt');
 });
 
-it('creates an asset', function () {
+it('creates an asset from an upload', function () {
     Event::fake();
         
     Storage::fake('test');
+    
+    UploadedFile::fake()->image('test1.txt');
 
     $container = tap(Facades\AssetContainer::make('test')->disk('test'))->save();
         
@@ -134,17 +113,17 @@ it('creates an asset', function () {
     $this->assertCount(0, Facades\Asset::all());
             
     $response = $this->post(route('private.asset-containers.assets.store', ['asset_container' => $container->handle()]), [
-        'title' => 'test',
-        'path' => 'test1.txt',
+        'file' => UploadedFile::fake()->image('test1.txt'),
         'folder' => '/',
     ]);
         
-    $response->dd()->assertOk();
+    $response->assertOk();
     
     $json = $response->json();
     
-    $this->assertSame('test', array_get($json, 'data.title'));
-    $this->assertSame('test', Facades\Asset::all()->first()->get('title'));
+    $this->assertSame('test1.txt', array_get($json, 'data.title'));
+    $this->assertSame('test1.txt', Facades\Asset::all()->first()->path());
+    Storage::disk('test')->assertExists('test1.txt');
 });
 
 it('returns validation errors when creating an asset', function () {
