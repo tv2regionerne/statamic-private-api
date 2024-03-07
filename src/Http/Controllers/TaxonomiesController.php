@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Taxonomies\TaxonomiesController as CpController;
@@ -36,14 +37,34 @@ class TaxonomiesController extends ApiController
     {
         abort_if(! $this->resourcesAllowed('taxonomies', ''), 404);
 
-        return (new CpController($request))->store($request);
+        try {            
+            (new CpController($request))->store($request);
+            
+            $taxonomy = $this->taxonomyFromHandle($request->input('handle'));
+    
+            return TaxonomyResource::make($taxonomy);            
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
-    public function update(Request $request, $taxonomy)
+    public function update(Request $request, $handle)
     {
-        $taxonomy = $this->taxonomyFromHandle($taxonomy);
+        $taxonomy = $this->taxonomyFromHandle($handle);
 
-        return (new CpController($request))->update($request, $taxonomy);
+        try {
+            $mergedData = collect($this->show($handle)->toArray($request))->merge($request->all());
+
+            $request->merge($mergedData->all()); 
+
+            (new CpController($request))->update($request, $taxonomy);
+                
+            $taxonomy = $this->taxonomyFromHandle($handle);
+    
+            return TaxonomyResource::make($taxonomy);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function destroy(Request $request, $taxonomy)

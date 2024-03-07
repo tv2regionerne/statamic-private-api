@@ -144,23 +144,25 @@ Route::prefix(config('private-api.route'))
 
                 // taxonomy terms
                 Route::prefix('/taxonomies')
+                    ->name('taxonomies.')
                     ->group(function () {
-                        Route::get('/', [Controllers\TaxonomiesController::class, 'index']);
-                        Route::post('/', [Controllers\TaxonomiesController::class, 'store']);
+                        Route::get('/', [Controllers\TaxonomiesController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\TaxonomiesController::class, 'store'])->name('store');
 
                         Route::prefix('/{taxonomy}')
                             ->group(function () {
-                                Route::get('/', [Controllers\TaxonomiesController::class, 'show']);
-                                Route::patch('/', [Controllers\TaxonomiesController::class, 'update']);
-                                Route::delete('/', [Controllers\TaxonomiesController::class, 'destroy']);
+                                Route::get('/', [Controllers\TaxonomiesController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\TaxonomiesController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\TaxonomiesController::class, 'destroy'])->name('destroy');
 
                                 Route::prefix('/terms')
+                                    ->name('terms.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\TaxonomyTermsController::class, 'index']);
-                                        Route::get('{term}', [Controllers\TaxonomyTermsController::class, 'show']);
-                                        Route::post('/', [Controllers\TaxonomyTermsController::class, 'store']);
-                                        Route::patch('{term}', [Controllers\TaxonomyTermsController::class, 'update']);
-                                        Route::delete('{term}', [Controllers\TaxonomyTermsController::class, 'destroy']);
+                                        Route::get('/', [Controllers\TaxonomyTermsController::class, 'index'])->name('index');
+                                        Route::get('{term}', [Controllers\TaxonomyTermsController::class, 'show'])->name('show');
+                                        Route::post('/', [Controllers\TaxonomyTermsController::class, 'store'])->name('store');
+                                        Route::patch('{term}', [Controllers\TaxonomyTermsController::class, 'update'])->name('update');
+                                        Route::delete('{term}', [Controllers\TaxonomyTermsController::class, 'destroy'])->name('destroy');
                                     });
                             });
                     });
