@@ -167,12 +167,13 @@ Route::prefix(config('private-api.route'))
 
                 // users
                 Route::prefix('/users')
+                    ->name('users.')
                     ->group(function () {
-                        Route::get('/', [Controllers\UsersController::class, 'index']);
-                        Route::get('{id}', [Controllers\UsersController::class, 'show']);
-                        Route::post('/', [Controllers\UsersController::class, 'store']);
-                        Route::patch('{id}', [Controllers\UsersController::class, 'update']);
-                        Route::delete('{id}', [Controllers\UsersController::class, 'destroy']);
+                        Route::get('/', [Controllers\UsersController::class, 'index'])->name('index');
+                        Route::get('{id}', [Controllers\UsersController::class, 'show'])->name('show');
+                        Route::post('/', [Controllers\UsersController::class, 'store'])->name('store');
+                        Route::patch('{id}', [Controllers\UsersController::class, 'update'])->name('update');
+                        Route::delete('{id}', [Controllers\UsersController::class, 'destroy'])->name('destroy');
                     });
 
                 PrivateApi::additionalRoutes();

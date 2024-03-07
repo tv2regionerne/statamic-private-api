@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Users\UsersController as CpController;
@@ -35,9 +36,19 @@ class UsersController extends ApiController
 
     public function store(Request $request)
     {
-        abort_if(! $this->resourcesAllowed('users', ''), 404);
+        try {
+            if (! $request->input('invitation')) {
+                $request = $request->merge(['invitation' => ['send' => false]]);
+            }
 
-        return (new CpController($request))->store($request);
+            (new CpController($request))->store($request);
+
+            $user = Facades\User::findByEmail($request->input('email'));
+
+            return app(UserResource::class)::make($user);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function update(Request $request, $id)
@@ -48,15 +59,19 @@ class UsersController extends ApiController
             abort(404);
         }
 
-        // cp controller expects the full payload, so merge with existing values
-        $originalData = collect((new CpController($request))->edit($request, $user)->get('values'))->filter();
-        $originalData = $originalData->merge($request->all());
+        try {
+            $data = $this->show($id)->toArray($request);
 
-        $request->merge($originalData->all());
+            $mergedData = collect($data)->merge($request->all());
 
-        $response = (new CpController($request))->update($request, $id);
+            $request->merge($mergedData->all());
 
-        return app(UserResource::class)::make($user);
+            (new CpController($request))->update($request, $id);
+
+            return app(UserResource::class)::make($user);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function destroy(Request $request, $id)
