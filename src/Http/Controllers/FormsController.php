@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Forms\FormsController as CpController;
@@ -34,16 +35,29 @@ class FormsController extends ApiController
 
     public function store(Request $request)
     {
-        abort_if(! $this->resourcesAllowed('forms', ''), 404);
-
-        return (new CpController($request))->store($request);
+        try {
+            (new CpController($request))->store($request);
+            
+            $form = $this->formFromHandle($request->input('handle'));
+            
+            return app(FormResource::class)::make($form);            
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function update(Request $request, $form)
     {
         $form = $this->formFromHandle($form);
 
-        return (new CpController($request))->update($form, $request);
+        try {
+            (new CpController($request))->update($form, $request);
+            
+            $form = $this->formFromHandle($form);
+            return app(FormResource::class)::make($form);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function destroy(Request $request, $form)

@@ -76,21 +76,23 @@ Route::prefix(config('private-api.route'))
 
                 // forms
                 Route::prefix('/forms')
+                    ->name('forms.')
                     ->group(function () {
-                        Route::get('/', [Controllers\FormsController::class, 'index']);
-                        Route::post('/', [Controllers\FormsController::class, 'store']);
+                        Route::get('/', [Controllers\FormsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\FormsController::class, 'store'])->name('store');
 
                         Route::prefix('/{form}')
                             ->group(function () {
-                                Route::get('/', [Controllers\FormsController::class, 'show']);
-                                Route::patch('/', [Controllers\FormsController::class, 'update']);
-                                Route::delete('/', [Controllers\FormsController::class, 'destroy']);
+                                Route::get('/', [Controllers\FormsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\FormsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\FormsController::class, 'destroy'])->name('destroy');
 
                                 Route::prefix('/submissions')
+                                    ->name('submissions.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\FormSubmissionsController::class, 'index']);
-                                        Route::get('{id}', [Controllers\FormSubmissionsController::class, 'show']);
-                                        Route::delete('{id}', [Controllers\FormSubmissionsController::class, 'destroy']);
+                                        Route::get('/', [Controllers\FormSubmissionsController::class, 'index'])->name('index');
+                                        Route::get('{id}', [Controllers\FormSubmissionsController::class, 'show'])->name('show');
+                                        Route::delete('{id}', [Controllers\FormSubmissionsController::class, 'destroy'])->name('destroy');
                                     });
                             });
                     });
@@ -170,10 +172,6 @@ Route::prefix(config('private-api.route'))
                         Route::patch('{id}', [Controllers\UsersController::class, 'update']);
                         Route::delete('{id}', [Controllers\UsersController::class, 'destroy']);
                     });
-
-                //
-                //            Route::name('assets.index')->get('assets/{asset_container}', [AssetsController::class, 'index']);
-                //            Route::name('assets.show')->get('assets/{asset_container}/{asset}', [AssetsController::class, 'show'])->where('asset', '.*');
 
                 PrivateApi::additionalRoutes();
             });
