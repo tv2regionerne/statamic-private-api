@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Event;
 use Statamic\Facades;
 
 it('gets variables', function () {
@@ -20,7 +19,7 @@ it('gets variables', function () {
     $response->assertOk();
 
     $json = $response->json();
-    
+
     $this->assertSame('test', $json['handle']);
 });
 

@@ -29,13 +29,13 @@ class GlobalsController extends ApiController
     public function store(Request $request)
     {
         abort_if(! $this->resourcesAllowed('globals', ''), 404);
-        
+
         try {
             (new CpController($request))->store($request);
-            
+
             $global = $this->globalFromHandle($request->input('handle'));
-            
-            return GlobalResource::make($global);       
+
+            return GlobalResource::make($global);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
@@ -44,7 +44,7 @@ class GlobalsController extends ApiController
     public function show($global)
     {
         $global = $this->globalFromHandle($global);
-        
+
         return GlobalResource::make($global);
     }
 
@@ -55,13 +55,13 @@ class GlobalsController extends ApiController
         try {
             $mergedData = collect($this->show($handle)->toArray($request))->merge($request->all());
 
-            $request->merge($mergedData->all());       
-            
+            $request->merge($mergedData->all());
+
             (new CpController($request))->update($request, $global->handle());
-            
+
             $global = $this->globalFromHandle($handle);
-            
-            return GlobalResource::make($global);       
+
+            return GlobalResource::make($global);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }

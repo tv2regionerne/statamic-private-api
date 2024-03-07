@@ -32,7 +32,7 @@ it('respects global restrictions', function () {
     $form = tap(Facades\GlobalSet::make('test'))->save();
 
     $this->actingAs(makeUser());
-    
+
     $this->get(route('private.globals.show', ['globalset' => 'test']))
         ->assertNotFound();
 
