@@ -39,10 +39,10 @@ class NavsController extends ApiController
 
         try {
             (new CpController($request))->store($request);
-            
+
             $nav = $this->navFromHandle($request->input('handle'));
-    
-            return NavResource::make($nav);            
+
+            return NavResource::make($nav);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
@@ -54,14 +54,14 @@ class NavsController extends ApiController
 
         try {
             $mergedData = collect($this->show($handle)->toArray($request))->merge($request->all());
-            
-            $request->merge($mergedData->all()); 
-            
+
+            $request->merge($mergedData->all());
+
             (new CpController($request))->update($request, $nav->handle());
-        
+
             $nav = $this->navFromHandle($handle);
-    
-            return NavResource::make($nav);            
+
+            return NavResource::make($nav);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }

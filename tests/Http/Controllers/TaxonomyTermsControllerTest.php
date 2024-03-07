@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades;
 
-it('gets terms', function () {    
+it('gets terms', function () {
     $taxonomy = tap(Facades\Taxonomy::make('test'))->save();
 
     $term1 = tap(Facades\Term::make()->taxonomy($taxonomy)->inDefaultLocale()->slug('test1')->data([]))->save();

@@ -43,8 +43,8 @@ class TaxonomyTermsController extends ApiController
 
         try {
             $response = (new CpController($request))->store($request, $taxonomy, Facades\Site::current());
-                
-            return app(TermResource::class)::make(Facades\Term::find($response->id()));                
+
+            return app(TermResource::class)::make(Facades\Term::find($response->id()));
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
@@ -56,16 +56,16 @@ class TaxonomyTermsController extends ApiController
         $term = $this->termFromSlug($termHandle, $taxonomy);
 
         $this->abortIfInvalid($term, $taxonomy);
-        
+
         try {
             $data = json_decode($this->show($taxonomyHandle, $termHandle)->toJson(), true);
             $mergedData = collect($data)->merge($request->all());
 
-            $request->merge($mergedData->all()); 
-            
+            $request->merge($mergedData->all());
+
             (new CpController($request))->update($request, $taxonomy, $term, Facades\Site::current());
-                
-            return app(TermResource::class)::make($term->fresh());                
+
+            return app(TermResource::class)::make($term->fresh());
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }

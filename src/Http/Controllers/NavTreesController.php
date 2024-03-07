@@ -28,7 +28,7 @@ class NavTreesController extends ApiController
         }
 
         $nav->in($request->site)->tree($request->pages ?? [])->save();
-        
+
         return (new CpController($request))->index($request, $nav->handle());
     }
 

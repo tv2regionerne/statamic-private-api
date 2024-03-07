@@ -37,12 +37,12 @@ class TaxonomiesController extends ApiController
     {
         abort_if(! $this->resourcesAllowed('taxonomies', ''), 404);
 
-        try {            
+        try {
             (new CpController($request))->store($request);
-            
+
             $taxonomy = $this->taxonomyFromHandle($request->input('handle'));
-    
-            return TaxonomyResource::make($taxonomy);            
+
+            return TaxonomyResource::make($taxonomy);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
@@ -55,12 +55,12 @@ class TaxonomiesController extends ApiController
         try {
             $mergedData = collect($this->show($handle)->toArray($request))->merge($request->all());
 
-            $request->merge($mergedData->all()); 
+            $request->merge($mergedData->all());
 
             (new CpController($request))->update($request, $taxonomy);
-                
+
             $taxonomy = $this->taxonomyFromHandle($handle);
-    
+
             return TaxonomyResource::make($taxonomy);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
