@@ -122,22 +122,24 @@ Route::prefix(config('private-api.route'))
 
                 // navs
                 Route::prefix('/navs')
+                    ->name('navs.')
                     ->group(function () {
-                        Route::get('/', [Controllers\NavsController::class, 'index']);
-                        Route::post('/', [Controllers\NavsController::class, 'store']);
+                        Route::get('/', [Controllers\NavsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\NavsController::class, 'store'])->name('store');
 
                         // individual navs
                         Route::prefix('/{nav}')
                             ->group(function () {
-                                Route::get('/', [Controllers\NavsController::class, 'show']);
-                                Route::patch('/', [Controllers\NavsController::class, 'update']);
-                                Route::delete('/', [Controllers\NavsController::class, 'destroy']);
+                                Route::get('/', [Controllers\NavsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\NavsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\NavsController::class, 'destroy'])->name('destroy');
 
                                 // nav tree
                                 Route::prefix('/tree')
+                                    ->name('trees.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\NavTreesController::class, 'show']);
-                                        Route::patch('/', [Controllers\NavTreesController::class, 'update']);
+                                        Route::get('/', [Controllers\NavTreesController::class, 'show'])->name('show');
+                                        Route::patch('/', [Controllers\NavTreesController::class, 'update'])->name('update');
                                     });
                             });
                     });

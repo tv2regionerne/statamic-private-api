@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Navigation\NavigationController as CpController;
@@ -18,7 +19,7 @@ class NavsController extends ApiController
     {
         abort_if(! $this->resourcesAllowed('navs', ''), 404);
 
-        $query = (new ItemQueryBuilder)->withItems(Facades\Collection::all());
+        $query = (new ItemQueryBuilder)->withItems(Facades\Nav::all());
 
         return NavResource::collection(
             $this->filterSortAndPaginate($query)
@@ -36,14 +37,34 @@ class NavsController extends ApiController
     {
         abort_if(! $this->resourcesAllowed('navs', ''), 404);
 
-        return (new CpController($request))->store($request);
+        try {
+            (new CpController($request))->store($request);
+            
+            $nav = $this->navFromHandle($request->input('handle'));
+    
+            return NavResource::make($nav);            
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
-    public function update(Request $request, $nav)
+    public function update(Request $request, $handle)
     {
-        $nav = $this->navFromHandle($nav);
+        $nav = $this->navFromHandle($handle);
 
-        return (new CpController($request))->update($request, $nav->handle());
+        try {
+            $mergedData = collect($this->show($handle)->toArray($request))->merge($request->all());
+            
+            $request->merge($mergedData->all()); 
+            
+            (new CpController($request))->update($request, $nav->handle());
+        
+            $nav = $this->navFromHandle($handle);
+    
+            return NavResource::make($nav);            
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function destroy(Request $request, $nav)

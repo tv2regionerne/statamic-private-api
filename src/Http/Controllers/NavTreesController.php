@@ -27,7 +27,9 @@ class NavTreesController extends ApiController
             $request->merge(['site' => Facades\Site::selected()->handle()]);
         }
 
-        return (new CpController($request))->update($request, $nav->handle());
+        $nav->in($request->site)->tree($request->pages ?? [])->save();
+        
+        return (new CpController($request))->index($request, $nav->handle());
     }
 
     private function navFromHandle($nav)
