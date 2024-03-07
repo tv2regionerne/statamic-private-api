@@ -66,9 +66,10 @@ Route::prefix(config('private-api.route'))
 
                                 // collection tree
                                 Route::prefix('/tree')
+                                    ->name('trees.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\CollectionTreesController::class, 'show']);
-                                        Route::patch('/', [Controllers\CollectionTreesController::class, 'update']);
+                                        Route::get('/', [Controllers\CollectionTreesController::class, 'show'])->name('show');
+                                        Route::patch('/', [Controllers\CollectionTreesController::class, 'update'])->name('update');
                                     });
                             });
                     });

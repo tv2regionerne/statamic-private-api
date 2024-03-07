@@ -60,7 +60,7 @@ class AssetContainersController extends ApiController
             
             return AssetContainerResource::make($this->containerFromHandle($handle));
         } catch (ValidationException $e) {
-            return $e;
+            return $this->returnValidationErrors($e);
         }
     }
 
