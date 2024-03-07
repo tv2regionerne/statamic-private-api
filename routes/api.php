@@ -99,21 +99,23 @@ Route::prefix(config('private-api.route'))
 
                 // globals
                 Route::prefix('/globals')
+                    ->name('globals.')
                     ->group(function () {
-                        Route::get('/', [Controllers\GlobalsController::class, 'index']);
-                        Route::post('/', [Controllers\GlobalsController::class, 'store']);
+                        Route::get('/', [Controllers\GlobalsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\GlobalsController::class, 'store'])->name('store');
 
                         // individual set
-                        Route::prefix('/{global}')
+                        Route::prefix('/{globalset}')
                             ->group(function () {
-                                Route::get('/', [Controllers\GlobalsController::class, 'show']);
-                                Route::patch('/', [Controllers\GlobalsController::class, 'update']);
-                                Route::delete('/', [Controllers\GlobalsController::class, 'destroy']);
+                                Route::get('/', [Controllers\GlobalsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\GlobalsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\GlobalsController::class, 'destroy'])->name('destroy');
 
-                                Route::prefix('/variables')
+                                Route::prefix('/variables/{site}')
+                                    ->name('variables.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\GlobalVariablesController::class, 'show']);
-                                        Route::patch('/', [Controllers\GlobalVariablesController::class, 'update']);
+                                        Route::get('/', [Controllers\GlobalVariablesController::class, 'show'])->name('show');
+                                        Route::patch('/', [Controllers\GlobalVariablesController::class, 'update'])->name('update');
                                     });
                             });
                     });

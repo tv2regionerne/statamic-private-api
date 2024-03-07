@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Globals\GlobalsController as CpController;
@@ -28,22 +29,42 @@ class GlobalsController extends ApiController
     public function store(Request $request)
     {
         abort_if(! $this->resourcesAllowed('globals', ''), 404);
-
-        return (new CpController($request))->store($request);
+        
+        try {
+            (new CpController($request))->store($request);
+            
+            $global = $this->globalFromHandle($request->input('handle'));
+            
+            return GlobalResource::make($global);       
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function show($global)
     {
         $global = $this->globalFromHandle($global);
-
+        
         return GlobalResource::make($global);
     }
 
-    public function update(Request $request, $global)
+    public function update(Request $request, $handle)
     {
-        $global = $this->globalFromHandle($global);
+        $global = $this->globalFromHandle($handle);
 
-        return (new CpController($request))->update($request, $global->handle());
+        try {
+            $mergedData = collect($this->show($handle)->toArray($request))->merge($request->all());
+
+            $request->merge($mergedData->all());       
+            
+            (new CpController($request))->update($request, $global->handle());
+            
+            $global = $this->globalFromHandle($handle);
+            
+            return GlobalResource::make($global);       
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function destroy(Request $request, $global)
