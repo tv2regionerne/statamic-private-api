@@ -77,7 +77,15 @@ class UsersController extends ApiController
     public function destroy(Request $request, $id)
     {
         abort_if(! $this->resourcesAllowed('users', ''), 404);
+        
+        if (! $user = Facades\User::find($id)) {
+            abort(404);
+        }
 
-        return (new CpController($request))->destroy($id);
+        $this->authorize('delete', $user);
+
+        $user->delete();
+
+        return response('', 204);
     }
 }
