@@ -40,9 +40,9 @@ class AssetContainersController extends ApiController
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
-        
+
         $container = $this->containerFromHandle($request->input('handle'));
-        
+
         return AssetContainerResource::make($container);
     }
 
@@ -57,7 +57,7 @@ class AssetContainersController extends ApiController
 
         try {
             (new CpController($request))->update($request, $container);
-            
+
             return AssetContainerResource::make($this->containerFromHandle($handle));
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);

@@ -40,16 +40,16 @@ class CollectionsController extends ApiController
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
-        
+
         $collection = $this->collectionFromHandle($request->input('handle'));
-        
+
         return CollectionResource::make($collection);
     }
 
     public function update(Request $request, $handle)
     {
         $collection = $this->collectionFromHandle($handle);
-        
+
         $originalData = collect($collection->fileData())->merge($request->all());
 
         $request->merge($originalData->all());
@@ -59,9 +59,9 @@ class CollectionsController extends ApiController
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
-        
+
         $collection = $this->collectionFromHandle($handle);
-        
+
         return CollectionResource::make($collection);
     }
 

@@ -47,13 +47,13 @@ class CollectionEntriesController extends ApiController
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
-            
+
         if (! $id = Arr::get($response, 'data.id')) {
-            abort(403);    
+            abort(403);
         }
-        
+
         $entry = $this->entryFromId($id);
-            
+
         return app(EntryResource::class)::make($entry);
     }
 
@@ -63,7 +63,7 @@ class CollectionEntriesController extends ApiController
         $entry = $this->entryFromId($entry);
 
         $this->abortIfInvalid($entry, $collection);
-        
+
         $request->headers->add(['accept' => 'application/json']);
 
         $originalData = collect((new CpController($request))->edit($request, $collection, $entry)->get('values'))->filter();
@@ -76,11 +76,11 @@ class CollectionEntriesController extends ApiController
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
-        
+
         if (! $id = Arr::get($response, 'data.id')) {
-            abort(403);    
+            abort(403);
         }
-        
+
         $entry = $this->entryFromId($id);
 
         return app(EntryResource::class)::make($entry);

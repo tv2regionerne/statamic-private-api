@@ -37,10 +37,10 @@ class FormsController extends ApiController
     {
         try {
             (new CpController($request))->store($request);
-            
+
             $form = $this->formFromHandle($request->input('handle'));
-            
-            return app(FormResource::class)::make($form);            
+
+            return app(FormResource::class)::make($form);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
@@ -52,8 +52,9 @@ class FormsController extends ApiController
 
         try {
             (new CpController($request))->update($form, $request);
-            
+
             $form = $this->formFromHandle($form);
+
             return app(FormResource::class)::make($form);
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);

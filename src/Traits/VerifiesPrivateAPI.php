@@ -80,7 +80,7 @@ trait VerifiesPrivateAPI
 
         return false;
     }
-    
+
     public function returnValidationErrors(ValidationException $e)
     {
         return response()->json([

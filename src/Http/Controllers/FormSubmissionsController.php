@@ -30,12 +30,12 @@ class FormSubmissionsController extends ApiController
         $form = $this->formFromHandle($form);
 
         $submission = $form->submission($id);
-        
+
         if (! $submission) {
             abort(404);
         }
 
-        return (new FormSubmissionResource($submission));
+        return new FormSubmissionResource($submission);
     }
 
     public function destroy(Request $request, $form, $id)

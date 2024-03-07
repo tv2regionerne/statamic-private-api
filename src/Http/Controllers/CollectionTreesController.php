@@ -29,7 +29,7 @@ class CollectionTreesController extends ApiController
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
-        
+
         return (new CpController($request))->index($request, $collection);
     }
 

@@ -108,7 +108,7 @@ abstract class TestCase extends OrchestraTestCase
             'forms' => true,
             'users' => true,
         ]);
-        
+
         $app['config']->set('app.debug', true);
     }
 }
