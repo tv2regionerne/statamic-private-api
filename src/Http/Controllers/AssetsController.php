@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Assets\AssetsController as CpController;
@@ -84,8 +85,12 @@ class AssetsController extends ApiController
         if (! $asset) {
             abort(404);
         }
+        
+        $this->authorize('delete', [AssetContract::class, $container]);
 
-        return (new CpController($request))->destroy(base64_encode($asset->id()));
+        $asset->delete();
+
+        return response('', 204);
     }
 
     private function containerFromHandle($container)
