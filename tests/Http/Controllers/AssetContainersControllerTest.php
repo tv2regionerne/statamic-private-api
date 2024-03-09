@@ -1,12 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Statamic\Facades;
 
 it('gets containers', function () {
-    $container1 = tap(Facades\AssetContainer::make('test'))->save();
-    $container2 = tap(Facades\AssetContainer::make('blog'))->save();
-    $container3 = tap(Facades\AssetContainer::make('pages'))->save();
+    Storage::fake('test');
+
+    $container1 = tap(Facades\AssetContainer::make('test')->disk('test'))->save();
+    $container2 = tap(Facades\AssetContainer::make('blog')->disk('test'))->save();
+    $container3 = tap(Facades\AssetContainer::make('pages')->disk('test'))->save();
 
     $this->actingAs(makeUser());
 
