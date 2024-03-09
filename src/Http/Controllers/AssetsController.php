@@ -85,7 +85,7 @@ class AssetsController extends ApiController
         if (! $asset) {
             abort(404);
         }
-        
+
         $this->authorize('delete', [AssetContract::class, $container]);
 
         $asset->delete();
