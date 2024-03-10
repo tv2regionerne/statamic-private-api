@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\CollectionsController as CpController;
@@ -34,16 +35,34 @@ class CollectionsController extends ApiController
 
     public function store(Request $request)
     {
-        abort_if(! $this->resourcesAllowed('collections', ''), 404);
+        try {
+            (new CpController($request))->store($request);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
 
-        return (new CpController($request))->store($request);
+        $collection = $this->collectionFromHandle($request->input('handle'));
+
+        return CollectionResource::make($collection);
     }
 
-    public function update(Request $request, $collection)
+    public function update(Request $request, $handle)
     {
-        $collection = $this->collectionFromHandle($collection);
+        $collection = $this->collectionFromHandle($handle);
 
-        return (new CpController($request))->update($request, $collection);
+        $originalData = collect($collection->fileData())->merge($request->all());
+
+        $request->merge($originalData->all());
+
+        try {
+            (new CpController($request))->update($request, $collection);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
+
+        $collection = $this->collectionFromHandle($handle);
+
+        return CollectionResource::make($collection);
     }
 
     public function destroy(Request $request, $collection)
