@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
+use Statamic\Facades\Asset;
+use Statamic\Facades\Blink;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Assets\AssetsController as CpController;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\AssetResource;
@@ -62,18 +64,48 @@ class AssetsController extends ApiController
         }
 
         try {
-            $response = (new CpController($request))->store($request);
 
-            if (! $id = $response->id()) {
-                abort(403);
+            $response = (new CpController($request))->store($request);
+            $asset = $response->resource;
+            $fields = $asset->blueprint()->fields()->addValues($request->all());
+
+            $fields->validate();
+
+            $values = $fields->process()->values()->merge([
+                'focus' => $request->focus,
+            ]);
+
+            foreach ($values as $key => $value) {
+                $asset->set($key, $value);
             }
 
-            $asset = Facades\Asset::find($id);
+            $asset->save();
+            Blink::forget("eloquent-asset-{$asset->id()}");
+            Blink::forget("asset-meta-{$asset->id()}");
+            $asset = Asset::findById($asset->id());
 
             return AssetResource::make($asset);
+
         } catch (ValidationException $e) {
             return $this->returnValidationErrors($e);
         }
+    }
+
+    public function update(Request $request, $container, $asset)
+    {
+        $request->merge([
+            'container' => $container,
+        ]);
+
+        $response = (new CpController($request))->update($request, $asset);
+        $assetId = $response['asset']['id'];
+
+        Blink::forget("eloquent-asset-{$assetId}");
+        Blink::forget("asset-meta-{$assetId}");
+
+        $asset = Asset::findById($assetId);
+
+        return AssetResource::make($asset);
     }
 
     public function destroy(Request $request, $container, $id)
