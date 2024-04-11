@@ -4,9 +4,11 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Statamic\Facades;
+use Statamic\Facades\Asset;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Assets\AssetsController as CpController;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\AssetResource;
@@ -59,7 +61,43 @@ class AssetsController extends ApiController
             $request->files->set('file', new UploadedFile(storage_path('tmp/'.$filename), $filename));
         }
 
-        return (new CpController($request))->store($request);
+        $response = (new CpController($request))->store($request);
+
+        /** @var \Statamic\Assets\Asset $asset */
+        $asset = $response->resource;
+
+        $fields = $asset->blueprint()->fields()->addValues($request->all());
+
+        $fields->validate();
+
+        $values = $fields->process()->values()->merge([
+            'focus' => $request->focus,
+        ]);
+
+        foreach ($values as $key => $value) {
+            $asset->set($key, $value);
+        }
+
+        $asset->save();
+        Cache::forget($asset->metaCacheKey());
+        $asset = Asset::findById($asset->id());
+        return AssetResource::make($asset);
+    }
+
+    public function update(Request $request, $container, $asset)
+    {
+        $request->merge([
+            'container' => $container,
+        ]);
+
+        $response = (new CpController($request))->update($request, $asset);
+        $assetId = $response['asset']['id'];
+
+        //$asset = Asset::findById($assetId);
+        //Cache::forget($asset->metaCacheKey());
+
+        $asset = Asset::findById($assetId);
+        return AssetResource::make($asset);
     }
 
     public function destroy(Request $request, $container, $id)

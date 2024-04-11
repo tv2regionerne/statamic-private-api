@@ -32,6 +32,7 @@ Route::prefix(config('private-api.route'))
                                     ->group(function () {
                                         Route::get('/', [Controllers\AssetsController::class, 'index']);
                                         Route::get('{id}', [Controllers\AssetsController::class, 'show']);
+                                        Route::patch('{id}', [Controllers\AssetsController::class, 'update']);
                                         Route::delete('{id}', [Controllers\AssetsController::class, 'destroy']);
                                         Route::post('/', [Controllers\AssetsController::class, 'store']);
                                     });
