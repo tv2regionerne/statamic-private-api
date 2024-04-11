@@ -4,7 +4,6 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -87,6 +86,7 @@ class AssetsController extends ApiController
             Blink::forget("eloquent-asset-{$asset->id()}");
             Blink::forget("asset-meta-{$asset->id()}");
             $asset = Asset::findById($asset->id());
+
             return AssetResource::make($asset);
 
         } catch (ValidationException $e) {
@@ -107,6 +107,7 @@ class AssetsController extends ApiController
         Blink::forget("asset-meta-{$assetId}");
 
         $asset = Asset::findById($assetId);
+
         return AssetResource::make($asset);
     }
 
