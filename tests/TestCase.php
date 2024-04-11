@@ -85,7 +85,7 @@ abstract class TestCase extends OrchestraTestCase
         foreach ($configs as $config) {
             $app['config']->set(
                 "statamic.$config",
-                require (__DIR__."/../vendor/statamic/cms/config/{$config}.php")
+                require(__DIR__."/../vendor/statamic/cms/config/{$config}.php")
             );
         }
 
@@ -97,7 +97,7 @@ abstract class TestCase extends OrchestraTestCase
             'directory' => __DIR__.'/__fixtures__/users',
         ]);
 
-        $app['config']->set('private-api', require (__DIR__.'/../config/private-api.php'));
+        $app['config']->set('private-api', require(__DIR__.'/../config/private-api.php'));
         $app['config']->set('private-api.enabled', true);
         $app['config']->set('private-api.middleware', 'web');
         $app['config']->set('private-api.resources', [
