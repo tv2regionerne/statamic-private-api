@@ -4,7 +4,6 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -67,10 +66,7 @@ class AssetsController extends ApiController
         try {
 
             $response = (new CpController($request))->store($request);
-
-            /** @var \Statamic\Assets\Asset $asset */
             $asset = $response->resource;
-
             $fields = $asset->blueprint()->fields()->addValues($request->all());
 
             $fields->validate();
@@ -87,6 +83,7 @@ class AssetsController extends ApiController
             Blink::forget("eloquent-asset-{$asset->id()}");
             Blink::forget("asset-meta-{$asset->id()}");
             $asset = Asset::findById($asset->id());
+
             return AssetResource::make($asset);
 
         } catch (ValidationException $e) {
@@ -107,6 +104,7 @@ class AssetsController extends ApiController
         Blink::forget("asset-meta-{$assetId}");
 
         $asset = Asset::findById($assetId);
+
         return AssetResource::make($asset);
     }
 
