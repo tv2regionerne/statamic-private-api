@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\CollectionTreeController as CpController;
@@ -23,7 +24,13 @@ class CollectionTreesController extends ApiController
     {
         $collection = $this->collectionFromHandle($collection);
 
-        return (new CpController($request))->update($request, $collection);
+        try {
+            (new CpController($request))->update($request, $collection);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
+
+        return (new CpController($request))->index($request, $collection);
     }
 
     private function collectionFromHandle($collection)

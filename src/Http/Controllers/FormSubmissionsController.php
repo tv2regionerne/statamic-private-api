@@ -35,7 +35,7 @@ class FormSubmissionsController extends ApiController
             abort(404);
         }
 
-        return app(FormSubmissionResource::class)::make($submission);
+        return FormSubmissionResource::make($submission);
     }
 
     public function destroy(Request $request, $form, $id)

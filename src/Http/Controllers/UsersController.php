@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Users\UsersController as CpController;
@@ -35,9 +36,19 @@ class UsersController extends ApiController
 
     public function store(Request $request)
     {
-        abort_if(! $this->resourcesAllowed('users', ''), 404);
+        try {
+            if (! $request->input('invitation')) {
+                $request = $request->merge(['invitation' => ['send' => false]]);
+            }
 
-        return (new CpController($request))->store($request);
+            (new CpController($request))->store($request);
+
+            $user = Facades\User::findByEmail($request->input('email'));
+
+            return app(UserResource::class)::make($user);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function update(Request $request, $id)
@@ -48,34 +59,33 @@ class UsersController extends ApiController
             abort(404);
         }
 
-        // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($user->blueprint(), $user->data(), $request);
+        try {
+            $data = $this->show($id)->toArray($request);
 
-        if (! $mergedData->get('email')) {
-            $mergedData = $mergedData->merge(['email' => $user->email()]);
+            $mergedData = collect($data)->merge($request->all());
+
+            $request->merge($mergedData->all());
+
+            (new CpController($request))->update($request, $id);
+
+            return app(UserResource::class)::make($user);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
         }
-
-        if (! $mergedData->get('name')) {
-            $mergedData = $mergedData->merge(['name' => $user->name()]);
-        }
-
-        if (! $mergedData->get('roles')) {
-            $mergedData = $mergedData->merge(['roles' => $user->roles()->map->handle()->all()]);
-        }
-
-        if (! $mergedData->get('groups')) {
-            $mergedData = $mergedData->merge(['groups' => $user->groups()->map->handle()->all()]);
-        }
-
-        $request->merge($mergedData->all());
-
-        return (new CpController($request))->update($request, $id);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         abort_if(! $this->resourcesAllowed('users', ''), 404);
 
-        return (new CpController($request))->destroy($id);
+        if (! $user = Facades\User::find($id)) {
+            abort(404);
+        }
+
+        $this->authorize('delete', $user);
+
+        $user->delete();
+
+        return response('', 204);
     }
 }

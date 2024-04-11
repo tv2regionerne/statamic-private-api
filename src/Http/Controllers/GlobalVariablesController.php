@@ -3,33 +3,54 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\CP\Globals\GlobalVariablesController as CpController;
-use Statamic\Http\Resources\API\GlobalSetResource;
+use Tv2regionerne\StatamicPrivateApi\Http\Resources\GlobalVariablesResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 
 class GlobalVariablesController extends ApiController
 {
     use VerifiesPrivateAPI;
 
-    public function show($global)
+    public function show($global, $site)
     {
         $global = $this->globalFromHandle($global);
 
-        return app(GlobalSetResource::class)::make($global);
+        return GlobalVariablesResource::make($global->in($site->handle()));
     }
 
-    public function update(Request $request, $global)
+    public function update(Request $request, $handle, $site)
     {
-        $global = $this->globalFromHandle($global);
+        $global = $this->globalFromHandle($handle);
 
-        // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($global->blueprint(), $global->data(), $request);
+        try {
+            $data = $this->show($handle, $site)->toArray($request);
+            $mergedData = collect($data)->merge($request->all());
 
-        $request->merge($mergedData->all());
+            $set = $global->in($site->handle());
 
-        return (new CpController($request))->update($request, $global->handle());
+            $fields = $set->blueprint()->fields()->addValues($request->all());
+
+            $fields->validate();
+
+            $values = $fields->process()->values();
+
+            if ($set->hasOrigin()) {
+                $values = $values->only($request->input('_localized'));
+            }
+
+            $set->data($values);
+
+            $set->globalSet()->addLocalization($set)->save();
+
+            $global = $this->globalFromHandle($handle);
+
+            return GlobalVariablesResource::make($global->in($site->handle()));
+
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     private function globalFromHandle($global)

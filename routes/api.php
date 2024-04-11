@@ -9,7 +9,6 @@ Route::prefix(config('private-api.route'))
     ->group(function () {
 
         Route::name('private.')
-            ->middleware('auth:api')
             ->group(function () {
 
                 Route::get('/ping', function (Illuminate\Http\Request $request) {
@@ -18,159 +17,169 @@ Route::prefix(config('private-api.route'))
 
                 // assets
                 Route::prefix('/asset-containers')
+                    ->name('asset-containers.')
                     ->group(function () {
-                        Route::get('/', [Controllers\AssetContainersController::class, 'index']);
-                        Route::post('/', [Controllers\AssetContainersController::class, 'store']);
+                        Route::get('/', [Controllers\AssetContainersController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\AssetContainersController::class, 'store'])->name('store');
 
                         Route::prefix('/{asset_container}')
                             ->group(function () {
-                                Route::get('/', [Controllers\AssetContainersController::class, 'show']);
-                                Route::patch('/', [Controllers\AssetContainersController::class, 'update']);
-                                Route::delete('/', [Controllers\AssetContainersController::class, 'destroy']);
+                                Route::get('/', [Controllers\AssetContainersController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\AssetContainersController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\AssetContainersController::class, 'destroy'])->name('destroy');
 
                                 Route::prefix('/assets')
+                                    ->name('assets.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\AssetsController::class, 'index']);
-                                        Route::get('{id}', [Controllers\AssetsController::class, 'show']);
+                                        Route::get('/', [Controllers\AssetsController::class, 'index'])->name('index');
+                                        Route::get('{id}', [Controllers\AssetsController::class, 'show'])->name('show');
                                         Route::patch('{id}', [Controllers\AssetsController::class, 'update']);
-                                        Route::delete('{id}', [Controllers\AssetsController::class, 'destroy']);
-                                        Route::post('/', [Controllers\AssetsController::class, 'store']);
+                                        Route::delete('{id}', [Controllers\AssetsController::class, 'destroy'])->name('destroy');
+                                        Route::post('/', [Controllers\AssetsController::class, 'store'])->name('store');
                                     });
                             });
                     });
 
                 // collections
                 Route::prefix('/collections')
+                    ->name('collections.')
                     ->group(function () {
-                        Route::get('/', [Controllers\CollectionsController::class, 'index']);
-                        Route::post('/', [Controllers\CollectionsController::class, 'store']);
+                        Route::get('/', [Controllers\CollectionsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\CollectionsController::class, 'store'])->name('store');
 
                         // individual collection
                         Route::prefix('/{collection}')
                             ->group(function () {
-                                Route::get('/', [Controllers\CollectionsController::class, 'show']);
-                                Route::patch('/', [Controllers\CollectionsController::class, 'update']);
-                                Route::delete('/', [Controllers\CollectionsController::class, 'destroy']);
+                                Route::get('/', [Controllers\CollectionsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\CollectionsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\CollectionsController::class, 'destroy'])->name('destroy');
 
                                 // collection entries
                                 Route::prefix('/entries')
+                                    ->name('entries.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\CollectionEntriesController::class, 'index']);
-                                        Route::get('{entry}', [Controllers\CollectionEntriesController::class, 'show']);
-                                        Route::post('/', [Controllers\CollectionEntriesController::class, 'store']);
-                                        Route::patch('{entry}', [Controllers\CollectionEntriesController::class, 'update']);
-                                        Route::delete('{entry}', [Controllers\CollectionEntriesController::class, 'destroy']);
+                                        Route::get('/', [Controllers\CollectionEntriesController::class, 'index'])->name('index');
+                                        Route::get('{entry}', [Controllers\CollectionEntriesController::class, 'show'])->name('show');
+                                        Route::post('/', [Controllers\CollectionEntriesController::class, 'store'])->name('store');
+                                        Route::patch('{entry}', [Controllers\CollectionEntriesController::class, 'update'])->name('update');
+                                        Route::delete('{entry}', [Controllers\CollectionEntriesController::class, 'destroy'])->name('destroy');
                                     });
 
                                 // collection tree
                                 Route::prefix('/tree')
+                                    ->name('trees.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\CollectionTreesController::class, 'show']);
-                                        Route::patch('/', [Controllers\CollectionTreesController::class, 'update']);
+                                        Route::get('/', [Controllers\CollectionTreesController::class, 'show'])->name('show');
+                                        Route::patch('/', [Controllers\CollectionTreesController::class, 'update'])->name('update');
                                     });
                             });
                     });
 
                 // forms
                 Route::prefix('/forms')
+                    ->name('forms.')
                     ->group(function () {
-                        Route::get('/', [Controllers\FormsController::class, 'index']);
-                        Route::post('/', [Controllers\FormsController::class, 'store']);
+                        Route::get('/', [Controllers\FormsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\FormsController::class, 'store'])->name('store');
 
                         Route::prefix('/{form}')
                             ->group(function () {
-                                Route::get('/', [Controllers\FormsController::class, 'show']);
-                                Route::patch('/', [Controllers\FormsController::class, 'update']);
-                                Route::delete('/', [Controllers\FormsController::class, 'destroy']);
+                                Route::get('/', [Controllers\FormsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\FormsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\FormsController::class, 'destroy'])->name('destroy');
 
                                 Route::prefix('/submissions')
+                                    ->name('submissions.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\FormSubmissionsController::class, 'index']);
-                                        Route::get('{id}', [Controllers\FormSubmissionsController::class, 'show']);
-                                        Route::delete('{id}', [Controllers\FormSubmissionsController::class, 'destroy']);
+                                        Route::get('/', [Controllers\FormSubmissionsController::class, 'index'])->name('index');
+                                        Route::get('{id}', [Controllers\FormSubmissionsController::class, 'show'])->name('show');
+                                        Route::delete('{id}', [Controllers\FormSubmissionsController::class, 'destroy'])->name('destroy');
                                     });
                             });
                     });
 
                 // globals
                 Route::prefix('/globals')
+                    ->name('globals.')
                     ->group(function () {
-                        Route::get('/', [Controllers\GlobalsController::class, 'index']);
-                        Route::post('/', [Controllers\GlobalsController::class, 'store']);
+                        Route::get('/', [Controllers\GlobalsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\GlobalsController::class, 'store'])->name('store');
 
                         // individual set
-                        Route::prefix('/{global}')
+                        Route::prefix('/{globalset}')
                             ->group(function () {
-                                Route::get('/', [Controllers\GlobalsController::class, 'show']);
-                                Route::patch('/', [Controllers\GlobalsController::class, 'update']);
-                                Route::delete('/', [Controllers\GlobalsController::class, 'destroy']);
+                                Route::get('/', [Controllers\GlobalsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\GlobalsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\GlobalsController::class, 'destroy'])->name('destroy');
 
-                                Route::prefix('/variables')
+                                Route::prefix('/variables/{site}')
+                                    ->name('variables.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\GlobalVariablesController::class, 'show']);
-                                        Route::patch('/', [Controllers\GlobalVariablesController::class, 'update']);
+                                        Route::get('/', [Controllers\GlobalVariablesController::class, 'show'])->name('show');
+                                        Route::patch('/', [Controllers\GlobalVariablesController::class, 'update'])->name('update');
                                     });
                             });
                     });
 
                 // navs
                 Route::prefix('/navs')
+                    ->name('navs.')
                     ->group(function () {
-                        Route::get('/', [Controllers\NavsController::class, 'index']);
-                        Route::post('/', [Controllers\NavsController::class, 'store']);
+                        Route::get('/', [Controllers\NavsController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\NavsController::class, 'store'])->name('store');
 
                         // individual navs
                         Route::prefix('/{nav}')
                             ->group(function () {
-                                Route::get('/', [Controllers\NavsController::class, 'show']);
-                                Route::patch('/', [Controllers\NavsController::class, 'update']);
-                                Route::delete('/', [Controllers\NavsController::class, 'destroy']);
+                                Route::get('/', [Controllers\NavsController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\NavsController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\NavsController::class, 'destroy'])->name('destroy');
 
                                 // nav tree
                                 Route::prefix('/tree')
+                                    ->name('trees.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\NavTreesController::class, 'show']);
-                                        Route::patch('/', [Controllers\NavTreesController::class, 'update']);
+                                        Route::get('/', [Controllers\NavTreesController::class, 'show'])->name('show');
+                                        Route::patch('/', [Controllers\NavTreesController::class, 'update'])->name('update');
                                     });
                             });
                     });
 
                 // taxonomy terms
                 Route::prefix('/taxonomies')
+                    ->name('taxonomies.')
                     ->group(function () {
-                        Route::get('/', [Controllers\TaxonomiesController::class, 'index']);
-                        Route::post('/', [Controllers\TaxonomiesController::class, 'store']);
+                        Route::get('/', [Controllers\TaxonomiesController::class, 'index'])->name('index');
+                        Route::post('/', [Controllers\TaxonomiesController::class, 'store'])->name('store');
 
                         Route::prefix('/{taxonomy}')
                             ->group(function () {
-                                Route::get('/', [Controllers\TaxonomiesController::class, 'show']);
-                                Route::patch('/', [Controllers\TaxonomiesController::class, 'update']);
-                                Route::delete('/', [Controllers\TaxonomiesController::class, 'destroy']);
+                                Route::get('/', [Controllers\TaxonomiesController::class, 'show'])->name('show');
+                                Route::patch('/', [Controllers\TaxonomiesController::class, 'update'])->name('update');
+                                Route::delete('/', [Controllers\TaxonomiesController::class, 'destroy'])->name('destroy');
 
                                 Route::prefix('/terms')
+                                    ->name('terms.')
                                     ->group(function () {
-                                        Route::get('/', [Controllers\TaxonomyTermsController::class, 'index']);
-                                        Route::get('{term}', [Controllers\TaxonomyTermsController::class, 'show']);
-                                        Route::post('/', [Controllers\TaxonomyTermsController::class, 'store']);
-                                        Route::patch('{term}', [Controllers\TaxonomyTermsController::class, 'update']);
-                                        Route::delete('{term}', [Controllers\TaxonomyTermsController::class, 'destroy']);
+                                        Route::get('/', [Controllers\TaxonomyTermsController::class, 'index'])->name('index');
+                                        Route::get('{term}', [Controllers\TaxonomyTermsController::class, 'show'])->name('show');
+                                        Route::post('/', [Controllers\TaxonomyTermsController::class, 'store'])->name('store');
+                                        Route::patch('{term}', [Controllers\TaxonomyTermsController::class, 'update'])->name('update');
+                                        Route::delete('{term}', [Controllers\TaxonomyTermsController::class, 'destroy'])->name('destroy');
                                     });
                             });
                     });
 
                 // users
                 Route::prefix('/users')
+                    ->name('users.')
                     ->group(function () {
-                        Route::get('/', [Controllers\UsersController::class, 'index']);
-                        Route::get('{id}', [Controllers\UsersController::class, 'show']);
-                        Route::post('/', [Controllers\UsersController::class, 'store']);
-                        Route::patch('{id}', [Controllers\UsersController::class, 'update']);
-                        Route::delete('{id}', [Controllers\UsersController::class, 'destroy']);
+                        Route::get('/', [Controllers\UsersController::class, 'index'])->name('index');
+                        Route::get('{id}', [Controllers\UsersController::class, 'show'])->name('show');
+                        Route::post('/', [Controllers\UsersController::class, 'store'])->name('store');
+                        Route::patch('{id}', [Controllers\UsersController::class, 'update'])->name('update');
+                        Route::delete('{id}', [Controllers\UsersController::class, 'destroy'])->name('destroy');
                     });
-
-                //
-                //            Route::name('assets.index')->get('assets/{asset_container}', [AssetsController::class, 'index']);
-                //            Route::name('assets.show')->get('assets/{asset_container}/{asset}', [AssetsController::class, 'show'])->where('asset', '.*');
 
                 PrivateApi::additionalRoutes();
             });

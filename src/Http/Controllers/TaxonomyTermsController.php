@@ -3,6 +3,7 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Taxonomies\TermsController as CpController;
@@ -40,22 +41,34 @@ class TaxonomyTermsController extends ApiController
     {
         $taxonomy = $this->taxonomyFromHandle($taxonomy);
 
-        return (new CpController($request))->store($request, $taxonomy, Facades\Site::current());
+        try {
+            $response = (new CpController($request))->store($request, $taxonomy, Facades\Site::current());
+
+            return app(TermResource::class)::make(Facades\Term::find($response->id()));
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
-    public function update(Request $request, $taxonomy, $term)
+    public function update(Request $request, $taxonomyHandle, $termHandle)
     {
-        $taxonomy = $this->taxonomyFromHandle($taxonomy);
-        $term = $this->termFromSlug($term, $taxonomy);
+        $taxonomy = $this->taxonomyFromHandle($taxonomyHandle);
+        $term = $this->termFromSlug($termHandle, $taxonomy);
 
         $this->abortIfInvalid($term, $taxonomy);
 
-        // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($term->blueprint(), $term->data(), $request);
+        try {
+            $data = json_decode($this->show($taxonomyHandle, $termHandle)->toJson(), true);
+            $mergedData = collect($data)->merge($request->all());
 
-        $request->merge($mergedData->all());
+            $request->merge($mergedData->all());
 
-        return (new CpController($request))->update($request, $taxonomy, $term, Facades\Site::current());
+            (new CpController($request))->update($request, $taxonomy, $term, Facades\Site::current());
+
+            return app(TermResource::class)::make($term->fresh());
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
     }
 
     public function destroy(Request $request, $taxonomy, $term)

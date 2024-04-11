@@ -3,6 +3,8 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\EntriesController as CpController;
@@ -40,7 +42,19 @@ class CollectionEntriesController extends ApiController
     {
         $collection = $this->collectionFromHandle($collection);
 
-        return (new CpController($request))->store($request, $collection, Facades\Site::current());
+        try {
+            $response = (new CpController($request))->store($request, $collection, Facades\Site::current());
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
+        }
+
+        if (! $id = Arr::get($response, 'data.id')) {
+            abort(403);
+        }
+
+        $entry = $this->entryFromId($id);
+
+        return app(EntryResource::class)::make($entry);
     }
 
     public function update(Request $request, $collection, $entry)
@@ -50,29 +64,26 @@ class CollectionEntriesController extends ApiController
 
         $this->abortIfInvalid($entry, $collection);
 
-        // cp controller expects the full payload, so merge with existing values
-        $mergedData = $this->mergeBlueprintAndRequestData($entry->blueprint(), $entry->data(), $request);
+        $request->headers->add(['accept' => 'application/json']);
 
-        if ($entry->collection()->dated() && ($mergedData->get('date') === null)) {
-            $mergedData = $mergedData->merge([
-                'date' => [
-                    'date' => $entry->date()->format('Y-m-d'),
-                    'time' => $entry->date()->format('H:i'),
-                ],
-            ]);
+        $originalData = collect((new CpController($request))->edit($request, $collection, $entry)->get('values'))->filter();
+        $originalData = $originalData->merge($request->all());
+
+        $request->merge($originalData->all());
+
+        try {
+            $response = (new CpController($request))->update($request, $collection, $entry);
+        } catch (ValidationException $e) {
+            return $this->returnValidationErrors($e);
         }
 
-        if ($mergedData->get('published') === null) {
-            $mergedData = $mergedData->merge(['published' => $entry->published()]);
+        if (! $id = Arr::get($response, 'data.id')) {
+            abort(403);
         }
 
-        if ($mergedData->get('slug') === null) {
-            $mergedData = $mergedData->merge(['slug' => $entry->slug()]);
-        }
+        $entry = $this->entryFromId($id);
 
-        $request->merge($mergedData->all());
-
-        return (new CpController($request))->update($request, $collection, $entry);
+        return app(EntryResource::class)::make($entry);
     }
 
     public function destroy(Request $request, $collection, $entry)
