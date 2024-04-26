@@ -60,7 +60,8 @@ class AssetsController extends ApiController
             $filename = Str::afterLast($file, '/');
             Storage::disk('local')->put('tmp/'.$filename, $contents);
 
-            $request->files->set('file', new UploadedFile(storage_path('tmp/'.$filename), $filename));
+            $filepath = config('filesystems.disks.local.root').'/tmp/';
+            $request->files->set('file', new UploadedFile($filepath.$filename, $filename));
         }
 
         try {
