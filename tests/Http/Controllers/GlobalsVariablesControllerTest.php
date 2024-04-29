@@ -14,8 +14,7 @@ it('gets variables', function () {
 
     $this->actingAs(makeUser());
 
-    $response = $this->get(route('private.globals.variables.show', ['globalset' => $global1->handle(), 'site' => 'en']));
-
+    $response = $this->getJson(route('private.globals.variables.show', ['globalset' => $global1->handle(), 'site' => 'en']));
     $response->assertOk();
 
     $json = $response->json();
