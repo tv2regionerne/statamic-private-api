@@ -3,16 +3,19 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Testing\MimeType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use League\MimeTypeDetection\MimeTypeDetector;
 use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
 use Statamic\Facades\Asset;
 use Statamic\Facades\Blink;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Assets\AssetsController as CpController;
+use Symfony\Component\Mime\MimeTypes;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\AssetResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 
@@ -57,19 +60,47 @@ class AssetsController extends ApiController
                 abort(406);
             }
 
-            $filename = Str::afterLast($file, '/');
-            Storage::disk('local')->put('tmp/'.$filename, $contents);
+            $tmpFilename = Str::afterLast(parse_url($file, PHP_URL_PATH), '/');
+            if (empty($tmpFilename)) {
+                $tmpFilename = 'default_' . uniqid();
+            }
 
-            $request->files->set('file', new UploadedFile(storage_path('tmp/'.$filename), $filename));
+            // Get filename from reuest
+            $filename = $request->input('filename');
+
+            $tmpPath = $this->sanitizeFilename($tmpFilename);
+
+            // Save content to tmp file
+            file_put_contents(storage_path('tmp/'.$tmpPath), $contents);
+
+            // Check mimetype of the file and detect extension for the file
+            $mimetype = mime_content_type(storage_path('tmp/'.$tmpPath));
+            $mimetypes = new MimeTypes();
+            $extension = collect($mimetypes->getExtensions($mimetypes->guessMimeType(storage_path('tmp/'.$tmpPath))))->first();
+
+            // Create filename if not set through request
+            $filename ??= $this->sanitizeFilename($tmpPath, $extension);
+
+            // Check extension one last time and sanitize filename and extension
+            $pathinfo = pathinfo($filename);
+            if ($pathinfo['extension'] !== $extension) {
+                $filename = $this->sanitizeFilename($filename, $extension);
+            }
+
+            // Create a new uploadfile object to pass to cp routes
+            $fileUpload = new UploadedFile(storage_path('tmp/'.$tmpPath), $filename, $mimetype, null, true);
+            $request->files->set('file', $fileUpload);
         }
 
         try {
 
             $response = (new CpController($request))->store($request);
+
             $asset = $response->resource;
             $fields = $asset->blueprint()->fields()->addValues($request->all());
 
             $fields->validate();
+
 
             $values = $fields->process()->values()->merge([
                 'focus' => $request->focus,
@@ -87,6 +118,10 @@ class AssetsController extends ApiController
             return AssetResource::make($asset);
 
         } catch (ValidationException $e) {
+            // Delete the asset again if validations fail for the blueprint
+            if (isset($asset)) {
+                $asset->delete();
+            }
             return $this->returnValidationErrors($e);
         }
     }
@@ -145,5 +180,16 @@ class AssetsController extends ApiController
         }
 
         return Str::after($id, '::');
+    }
+
+    private  function sanitizeFilename($filename, $extension = null)
+    {
+        $pathinfo = pathinfo($filename);
+
+        $filename = Str::slug(Str::limit($pathinfo['filename'], 100, ''), '-');
+        if ($extension ??= $pathinfo['extension'] ?? null) {
+            $filename .= '.' . $extension;
+        }
+        return $filename;
     }
 }
