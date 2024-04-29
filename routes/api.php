@@ -112,7 +112,7 @@ Route::prefix(config('private-api.route'))
                                 Route::patch('/', [Controllers\GlobalsController::class, 'update'])->name('update');
                                 Route::delete('/', [Controllers\GlobalsController::class, 'destroy'])->name('destroy');
 
-                                Route::prefix('/variables/{site}')
+                                Route::prefix('/variables/{site?}')
                                     ->name('variables.')
                                     ->group(function () {
                                         Route::get('/', [Controllers\GlobalVariablesController::class, 'show'])->name('show');

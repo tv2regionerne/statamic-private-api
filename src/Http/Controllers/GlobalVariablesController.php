@@ -13,24 +13,26 @@ class GlobalVariablesController extends ApiController
 {
     use VerifiesPrivateAPI;
 
-    public function show($global, $site)
+    public function show($global, $site = null)
     {
         $global = $this->globalFromHandle($global);
+        $site = $site ? Facades\Site::get($site) : Facades\Site::default();
 
         return GlobalVariablesResource::make($global->in($site->handle()));
     }
 
-    public function update(Request $request, $handle, $site)
+    public function update(Request $request, $handle, $site = null)
     {
         $global = $this->globalFromHandle($handle);
+        $site = $site ? Facades\Site::get($site) : Facades\Site::default();
 
         try {
-            $data = $this->show($handle, $site)->toArray($request);
+            $data = $this->show($handle, $site->handle())->toArray($request)['data'] ?? [];
             $mergedData = collect($data)->merge($request->all());
 
             $set = $global->in($site->handle());
 
-            $fields = $set->blueprint()->fields()->addValues($request->all());
+            $fields = $set->blueprint()->fields()->addValues($mergedData->toArray());
 
             $fields->validate();
 
