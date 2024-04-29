@@ -13,18 +13,18 @@ class GlobalVariablesController extends ApiController
 {
     use VerifiesPrivateAPI;
 
-    public function show($global, string $site = null)
+    public function show($global, ?string $site = null)
     {
         $global = $this->globalFromHandle($global);
         $site = $site ? Facades\Site::get($site) : Facades\Site::default();
-        if (!$site) {
+        if (! $site) {
             abort(404);
         }
 
         return GlobalVariablesResource::make($global->in($site->handle()));
     }
 
-    public function update(Request $request, $handle, string $site = null)
+    public function update(Request $request, $handle, ?string $site = null)
     {
         $global = $this->globalFromHandle($handle);
         $site = $site ? Facades\Site::get($site) : Facades\Site::default();
@@ -44,7 +44,6 @@ class GlobalVariablesController extends ApiController
             if ($set->hasOrigin()) {
                 $values = $values->only($request->input('_localized'));
             }
-
 
             $set->data($values);
 
