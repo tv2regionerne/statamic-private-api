@@ -42,7 +42,6 @@ class GlobalVariablesController extends ApiController
                 $values = $values->only($request->input('_localized'));
             }
 
-
             $set->data($values);
 
             $set->globalSet()->addLocalization($set)->save();
