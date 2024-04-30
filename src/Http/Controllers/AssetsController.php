@@ -68,18 +68,19 @@ class AssetsController extends ApiController
             // Get filename from reuest
             $filename = $request->input('filename');
 
-            $tmpPath = $this->sanitizeFilename($tmpFilename);
+            $tmpFilename = $this->sanitizeFilename($tmpFilename);
 
             // Save content to tmp file
-            file_put_contents(storage_path('tmp/'.$tmpPath), $contents);
+            $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tmpFilename;
+            file_put_contents($tmpPath, $contents);
 
             // Check mimetype of the file and detect extension for the file
-            $mimetype = mime_content_type(storage_path('tmp/'.$tmpPath));
+            $mimetype = mime_content_type($tmpPath);
             $mimetypes = new MimeTypes();
             $extension = collect($mimetypes->getExtensions($mimetypes->guessMimeType(storage_path('tmp/'.$tmpPath))))->first();
 
             // Create filename if not set through request
-            $filename ??= $this->sanitizeFilename($tmpPath, $extension);
+            $filename ??= $this->sanitizeFilename($tmpFilename, $extension);
 
             // Check extension one last time and sanitize filename and extension
             $pathinfo = pathinfo($filename);
@@ -88,7 +89,7 @@ class AssetsController extends ApiController
             }
 
             // Create a new uploadfile object to pass to cp routes
-            $fileUpload = new UploadedFile(storage_path('tmp/'.$tmpPath), $filename, $mimetype, null, true);
+            $fileUpload = new UploadedFile($tmpPath, $filename, $mimetype, null, true);
             $request->files->set('file', $fileUpload);
         }
 
