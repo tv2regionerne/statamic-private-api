@@ -5,10 +5,8 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Testing\MimeType;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use League\MimeTypeDetection\MimeTypeDetector;
 use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
 use Statamic\Facades\Asset;
@@ -62,7 +60,7 @@ class AssetsController extends ApiController
 
             $tmpFilename = Str::afterLast(parse_url($file, PHP_URL_PATH), '/');
             if (empty($tmpFilename)) {
-                $tmpFilename = 'default_' . uniqid();
+                $tmpFilename = 'default_'.uniqid();
             }
 
             // Get filename from reuest
@@ -71,7 +69,7 @@ class AssetsController extends ApiController
             $tmpFilename = $this->sanitizeFilename($tmpFilename);
 
             // Save content to tmp file
-            $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tmpFilename;
+            $tmpPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.$tmpFilename;
             file_put_contents($tmpPath, $contents);
 
             // Check mimetype of the file and detect extension for the file
@@ -102,7 +100,6 @@ class AssetsController extends ApiController
 
             $fields->validate();
 
-
             $values = $fields->process()->values()->merge([
                 'focus' => $request->focus,
             ]);
@@ -123,6 +120,7 @@ class AssetsController extends ApiController
             if (isset($asset)) {
                 $asset->delete();
             }
+
             return $this->returnValidationErrors($e);
         }
     }
@@ -183,14 +181,15 @@ class AssetsController extends ApiController
         return Str::after($id, '::');
     }
 
-    private  function sanitizeFilename($filename, $extension = null)
+    private function sanitizeFilename($filename, $extension = null)
     {
         $pathinfo = pathinfo($filename);
 
         $filename = Str::slug(Str::limit($pathinfo['filename'], 100, ''), '-');
         if ($extension ??= $pathinfo['extension'] ?? null) {
-            $filename .= '.' . $extension;
+            $filename .= '.'.$extension;
         }
+
         return $filename;
     }
 }
