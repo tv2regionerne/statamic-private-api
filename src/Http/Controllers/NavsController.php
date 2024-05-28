@@ -30,6 +30,8 @@ class NavsController extends ApiController
     {
         $nav = $this->navFromHandle($nav);
 
+        $this->authorize('view', $nav);
+
         return NavResource::make($nav);
     }
 

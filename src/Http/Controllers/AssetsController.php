@@ -42,6 +42,8 @@ class AssetsController extends ApiController
             abort(404);
         }
 
+        $this->authorize('view', $asset);
+
         return AssetResource::make($asset);
     }
 
@@ -50,6 +52,7 @@ class AssetsController extends ApiController
         $request->merge([
             'container' => $container,
         ]);
+        $this->authorize('store', $container);
 
         if ($file = $request->input('file_url')) {
             $contents = file_get_contents($file);

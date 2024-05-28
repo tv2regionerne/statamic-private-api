@@ -28,6 +28,7 @@ class FormSubmissionsController extends ApiController
     public function show($form, $id)
     {
         $form = $this->formFromHandle($form);
+        $this->authorize('view', $form);
 
         $submission = $form->submission($id);
 

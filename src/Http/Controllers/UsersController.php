@@ -4,6 +4,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Statamic\Contracts\Auth\User;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Users\UsersController as CpController;
@@ -18,6 +19,8 @@ class UsersController extends ApiController
     {
         abort_if(! $this->resourcesAllowed('users', ''), 404);
 
+        $this->authorize('view', [User::class]);
+
         return app(UserResource::class)::collection(
             $this->filterSortAndPaginate(Facades\User::query())
         );
@@ -30,6 +33,8 @@ class UsersController extends ApiController
         if (! $user = Facades\User::find($id)) {
             abort(404);
         }
+
+        $this->authorize('view', $user);
 
         return app(UserResource::class)::make($user);
     }

@@ -29,6 +29,7 @@ class FormsController extends ApiController
     public function show($form)
     {
         $form = $this->formFromHandle($form);
+        $this->authorize('view', $form);
 
         return app(FormResource::class)::make($form);
     }

@@ -29,6 +29,7 @@ class AssetContainersController extends ApiController
     public function show($container)
     {
         $container = $this->containerFromHandle($container);
+        $this->authorize('view', $container);
 
         return AssetContainerResource::make($container);
     }
