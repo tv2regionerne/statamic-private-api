@@ -35,7 +35,7 @@ it('gets individual users', function () {
 
     $json = $response->json();
 
-    $this->assertSame($user->id(), array_get($json, 'data.id'));
+    $this->assertSame($user->id(), \Statamic\Support\Arr::get($json, 'data.id'));
 
     $this->get(route('private.users.show', ['id' => 'none']))
         ->assertNotFound();
@@ -71,7 +71,7 @@ it('creates a user', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test@test3.com', array_get($json, 'data.email'));
+    $this->assertSame('test@test3.com', \Statamic\Support\Arr::get($json, 'data.email'));
 });
 
 it('returns validation errors when creating a user', function () {

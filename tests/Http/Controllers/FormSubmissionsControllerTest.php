@@ -62,7 +62,7 @@ it('gets individual submissions', function () {
 
     $json = $response->json();
 
-    $this->assertSame($submission1->id(), array_get($json, 'data.id'));
+    $this->assertSame($submission1->id(), \Statamic\Support\Arr::get($json, 'data.id'));
 
     $this->get(route('private.forms.submissions.show', ['form' => $form->handle(), 'id' => 'none']))
         ->assertNotFound();

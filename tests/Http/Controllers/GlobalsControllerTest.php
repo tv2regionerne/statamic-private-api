@@ -57,7 +57,7 @@ it('updates a global', function () {
 
     $json = $response->json();
 
-    $this->assertSame('new title', array_get($json, 'data.title'));
+    $this->assertSame('new title', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('new title', Facades\GlobalSet::find('test')->title());
 });
 
@@ -91,7 +91,7 @@ it('creates a global', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\GlobalSet::all()->first()->title());
 });
 

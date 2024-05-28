@@ -64,7 +64,7 @@ it('gets individual terms', function () {
 
     $json = $response->json();
 
-    $this->assertSame($term1->id(), array_get($json, 'data.id'));
+    $this->assertSame($term1->id(), \Statamic\Support\Arr::get($json, 'data.id'));
 
     $this->get(route('private.taxonomies.terms.show', ['taxonomy' => $taxonomy->handle(), 'term' => 'none']))
         ->assertNotFound();
@@ -87,7 +87,7 @@ it('gets updates an term', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', $term1->fresh()->get('title'));
 });
 
@@ -125,7 +125,7 @@ it('creates a term', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\Term::all()->first()->get('title'));
 });
 

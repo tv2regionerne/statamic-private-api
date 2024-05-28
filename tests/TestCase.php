@@ -9,11 +9,14 @@ use Statamic\Extend\Manifest;
 use Statamic\Providers\StatamicServiceProvider;
 use Statamic\Stache\Stores\UsersStore;
 use Statamic\Statamic;
+use Statamic\Testing\AddonTestCase;
 use Tv2regionerne\StatamicPrivateApi\ServiceProvider;
 
-abstract class TestCase extends OrchestraTestCase
+abstract class TestCase extends AddonTestCase
 {
     use PreventSavingStacheItemsToDisk, RefreshDatabase;
+
+    protected string $addonServiceProvider = ServiceProvider::class;
 
     protected function setUp(): void
     {
@@ -76,7 +79,7 @@ abstract class TestCase extends OrchestraTestCase
             'cp',
             'forms',
             'static_caching',
-            'sites',
+            //'sites',
             'stache',
             'system',
             'users',

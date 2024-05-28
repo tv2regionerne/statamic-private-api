@@ -60,7 +60,7 @@ it('gets updates a container', function () {
 
     $json = $response->json();
 
-    $this->assertSame('new title', array_get($json, 'data.title'));
+    $this->assertSame('new title', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('new title', $container->title());
 });
 
@@ -111,6 +111,6 @@ it('creates a container', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\AssetContainer::all()->first()->title());
 });

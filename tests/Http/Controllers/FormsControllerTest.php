@@ -57,7 +57,7 @@ it('gets updates a form', function () {
 
     $json = $response->json();
 
-    $this->assertSame('new title', array_get($json, 'data.title'));
+    $this->assertSame('new title', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('new title', Facades\Form::find('test')->title());
 });
 
@@ -93,7 +93,7 @@ it('creates a form', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\Form::all()->first()->title());
 });
 

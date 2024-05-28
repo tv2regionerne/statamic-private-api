@@ -64,7 +64,7 @@ it('gets individual entries', function () {
 
     $json = $response->json();
 
-    $this->assertSame($entry1->id(), array_get($json, 'data.id'));
+    $this->assertSame($entry1->id(), \Statamic\Support\Arr::get($json, 'data.id'));
 
     $this->get(route('private.collections.entries.show', ['collection' => $collection->handle(), 'entry' => 'none']))
         ->assertNotFound();
@@ -87,7 +87,7 @@ it('gets updates an entry', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', $entry1->fresh()->get('title'));
 });
 
@@ -124,7 +124,7 @@ it('creates an entry', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\Entry::all()->first()->get('title'));
 });
 
