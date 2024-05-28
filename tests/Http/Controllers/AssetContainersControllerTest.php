@@ -32,7 +32,7 @@ it('gets containers', function () {
 it('respects container restrictions', function () {
     app('config')->set('private-api.resources.assets', ['none' => true]);
 
-    $container = tap(Facades\AssetContainer::make('test'))->save();
+    $container1 = tap(Facades\AssetContainer::make('test')->disk('test'))->save();
 
     $this->actingAs(makeUser());
 
@@ -41,8 +41,8 @@ it('respects container restrictions', function () {
 
     app('config')->set('private-api.resources.assets', ['test' => true]);
 
-    $this->get(route('private.asset-containers.show', ['asset_container' => 'test']))
-        ->assertOk();
+    $response = $this->get(route('private.asset-containers.show', ['asset_container' => 'test']));
+    $response->assertOk();
 });
 
 it('gets updates a container', function () {

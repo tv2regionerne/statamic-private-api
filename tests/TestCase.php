@@ -4,7 +4,6 @@ namespace Tv2regionerne\StatamicPrivateApi\Tests;
 
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Statamic\Extend\Manifest;
 use Statamic\Providers\StatamicServiceProvider;
 use Statamic\Stache\Stores\UsersStore;
@@ -44,6 +43,7 @@ abstract class TestCase extends AddonTestCase
         return [
             StatamicServiceProvider::class,
             ServiceProvider::class,
+            \Illuminate\Filesystem\FilesystemServiceProvider::class,
         ];
     }
 
@@ -51,6 +51,7 @@ abstract class TestCase extends AddonTestCase
     {
         return [
             'Statamic' => Statamic::class,
+            'Storage' => \Illuminate\Support\Facades\Storage::class,
         ];
     }
 
@@ -64,6 +65,17 @@ abstract class TestCase extends AddonTestCase
                 'namespace' => 'Tv2regionerne\\StatamicPrivateApi',
             ],
         ];
+
+        // Konfigurer test disken
+        $app['config']->set('filesystems.disks.test', [
+            'driver' => 'local',
+            'root' => storage_path('app/test'),
+            'url' => env('APP_URL').'/storage/test',
+            'visibility' => 'public',
+        ]);
+
+        // Opret 'test' disken midlertidigt for testens varighed
+        //Storage::fake('test');
     }
 
     protected function resolveApplicationConfiguration($app)
