@@ -30,7 +30,6 @@ class GlobalVariablesController extends ApiController
         $site = $site ? Facades\Site::get($site) : Facades\Site::default();
         $set = $global->in($site->handle());
 
-
         try {
             $data = $this->show($handle, $site->handle())->toArray($request)['data'] ?? [];
             $mergedData = collect($data)->merge($request->all());
