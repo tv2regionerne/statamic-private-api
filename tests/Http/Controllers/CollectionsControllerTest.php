@@ -6,7 +6,7 @@ use Statamic\Facades;
 it('gets collections', function () {
     $collection1 = tap(Facades\Collection::make('test'))->save();
     $collection2 = tap(Facades\Collection::make('blog'))->save();
-    $collectio3 = tap(Facades\Collection::make('pages'))->save();
+    $collection3 = tap(Facades\Collection::make('pages'))->save();
 
     $this->actingAs(makeUser());
 
@@ -57,7 +57,7 @@ it('gets updates a collection', function () {
 
     $json = $response->json();
 
-    $this->assertSame('new title', array_get($json, 'data.title'));
+    $this->assertSame('new title', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('new title', $collection->title());
 });
 
@@ -91,7 +91,7 @@ it('creates a collection', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\Collection::all()->first()->title());
 });
 

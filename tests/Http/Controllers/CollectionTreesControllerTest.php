@@ -64,6 +64,6 @@ it('updates a tree', function () {
 
     $json = $response->json();
 
-    $this->assertCount(2, array_get($json, 'pages'));
-    $this->assertSame('test2', array_get($json, 'pages.0.id'));
+    $this->assertCount(2, \Statamic\Support\Arr::get($json, 'pages'));
+    $this->assertSame('test2', \Statamic\Support\Arr::get($json, 'pages.0.id'));
 });

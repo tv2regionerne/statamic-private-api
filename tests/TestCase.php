@@ -4,16 +4,18 @@ namespace Tv2regionerne\StatamicPrivateApi\Tests;
 
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Statamic\Extend\Manifest;
 use Statamic\Providers\StatamicServiceProvider;
 use Statamic\Stache\Stores\UsersStore;
 use Statamic\Statamic;
+use Statamic\Testing\AddonTestCase;
 use Tv2regionerne\StatamicPrivateApi\ServiceProvider;
 
-abstract class TestCase extends OrchestraTestCase
+abstract class TestCase extends AddonTestCase
 {
     use PreventSavingStacheItemsToDisk, RefreshDatabase;
+
+    protected string $addonServiceProvider = ServiceProvider::class;
 
     protected function setUp(): void
     {
@@ -41,6 +43,7 @@ abstract class TestCase extends OrchestraTestCase
         return [
             StatamicServiceProvider::class,
             ServiceProvider::class,
+            \Illuminate\Filesystem\FilesystemServiceProvider::class,
         ];
     }
 
@@ -48,6 +51,7 @@ abstract class TestCase extends OrchestraTestCase
     {
         return [
             'Statamic' => Statamic::class,
+            'Storage' => \Illuminate\Support\Facades\Storage::class,
         ];
     }
 
@@ -61,6 +65,17 @@ abstract class TestCase extends OrchestraTestCase
                 'namespace' => 'Tv2regionerne\\StatamicPrivateApi',
             ],
         ];
+
+        // Konfigurer test disken
+        $app['config']->set('filesystems.disks.test', [
+            'driver' => 'local',
+            'root' => storage_path('app/test'),
+            'url' => env('APP_URL').'/storage/test',
+            'visibility' => 'public',
+        ]);
+
+        // Opret 'test' disken midlertidigt for testens varighed
+        //Storage::fake('test');
     }
 
     protected function resolveApplicationConfiguration($app)
@@ -76,7 +91,7 @@ abstract class TestCase extends OrchestraTestCase
             'cp',
             'forms',
             'static_caching',
-            'sites',
+            //'sites',
             'stache',
             'system',
             'users',

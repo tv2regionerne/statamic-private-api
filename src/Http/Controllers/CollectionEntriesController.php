@@ -93,7 +93,11 @@ class CollectionEntriesController extends ApiController
 
         $this->abortIfInvalid($entry, $collection);
 
-        return (new CpController($request))->destroy($entry->id());
+        $this->authorize('delete', $entry);
+
+        $entry->delete();
+
+        return response('', 204);
     }
 
     private function abortIfInvalid($entry, $collection)

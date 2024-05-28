@@ -73,7 +73,7 @@ it('gets individual assets', function () {
 
     $json = $response->json();
 
-    $this->assertSame($asset1->id(), array_get($json, 'data.id'));
+    $this->assertSame($asset1->id(), \Statamic\Support\Arr::get($json, 'data.id'));
 
     $this->get(route('private.asset-containers.assets.show', ['asset_container' => $container->handle(), 'id' => 'none']))
         ->assertNotFound();
@@ -121,7 +121,7 @@ it('creates an asset from an upload', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test1.txt', array_get($json, 'data.title'));
+    $this->assertSame('test1.txt', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test1.txt', Facades\Asset::all()->first()->path());
     Storage::disk('test')->assertExists('test1.txt');
 });

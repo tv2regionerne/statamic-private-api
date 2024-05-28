@@ -32,7 +32,7 @@ it('gets containers', function () {
 it('respects container restrictions', function () {
     app('config')->set('private-api.resources.assets', ['none' => true]);
 
-    $container = tap(Facades\AssetContainer::make('test'))->save();
+    $container1 = tap(Facades\AssetContainer::make('test')->disk('test'))->save();
 
     $this->actingAs(makeUser());
 
@@ -41,8 +41,8 @@ it('respects container restrictions', function () {
 
     app('config')->set('private-api.resources.assets', ['test' => true]);
 
-    $this->get(route('private.asset-containers.show', ['asset_container' => 'test']))
-        ->assertOk();
+    $response = $this->get(route('private.asset-containers.show', ['asset_container' => 'test']));
+    $response->assertOk();
 });
 
 it('gets updates a container', function () {
@@ -60,7 +60,7 @@ it('gets updates a container', function () {
 
     $json = $response->json();
 
-    $this->assertSame('new title', array_get($json, 'data.title'));
+    $this->assertSame('new title', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('new title', $container->title());
 });
 
@@ -111,6 +111,6 @@ it('creates a container', function () {
 
     $json = $response->json();
 
-    $this->assertSame('test', array_get($json, 'data.title'));
+    $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\AssetContainer::all()->first()->title());
 });

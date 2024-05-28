@@ -84,7 +84,7 @@ class UsersController extends ApiController
 
         $this->authorize('delete', $user);
 
-        $user->delete();
+        Facades\User::delete($user);
 
         return response('', 204);
     }

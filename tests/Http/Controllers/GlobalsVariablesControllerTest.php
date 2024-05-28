@@ -41,5 +41,5 @@ it('updates a variable', function () {
 
     $json = $response->json();
 
-    $this->assertSame('no', array_get($json, 'data.test'));
+    $this->assertSame('no', \Statamic\Support\Arr::get($json, 'data.test'));
 });
