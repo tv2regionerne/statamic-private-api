@@ -30,6 +30,8 @@ class TaxonomiesController extends ApiController
     {
         $taxonomy = $this->taxonomyFromHandle($taxonomy);
 
+        $this->authorize('view', $taxonomy);
+
         return TaxonomyResource::make($taxonomy);
     }
 

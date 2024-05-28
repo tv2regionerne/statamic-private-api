@@ -18,6 +18,7 @@ class CollectionEntriesController extends ApiController
     public function index($collection)
     {
         $collection = $this->collectionFromHandle($collection);
+        $this->authorize('view', $collection);
 
         $with = $collection->entryBlueprints()
             ->flatMap(fn ($blueprint) => $blueprint->fields()->all())
@@ -32,6 +33,7 @@ class CollectionEntriesController extends ApiController
     {
         $collection = $this->collectionFromHandle($collection);
         $entry = $this->entryFromId($entry);
+        $this->authorize('view', $entry);
 
         $this->abortIfInvalid($entry, $collection);
 

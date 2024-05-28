@@ -29,6 +29,7 @@ class CollectionsController extends ApiController
     public function show($collection)
     {
         $collection = $this->collectionFromHandle($collection);
+        $this->authorize('view', $collection);
 
         return CollectionResource::make($collection);
     }
