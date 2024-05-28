@@ -19,7 +19,8 @@
         "orchestra/testbench": "^9.0",
         "pestphp/pest": "^2.4",
         "pestphp/pest-plugin-watch": "^2.0",
-        "laravel/pint": "^1.13"
+        "laravel/pint": "^1.13",
+        "larastan/larastan": "^2.9"
     },
     "extra": {
         "statamic": {
