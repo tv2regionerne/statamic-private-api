@@ -45,6 +45,24 @@ Below example is using Laravel Passport for api authentication.
     ],
 ```
 
+Publish the config file:
+```
+php artisan vendor:publish --tag=private-api-config
+```
+
+Then, in /config/private-api.php enable the routes you would like to use, for example:
+```
+    'resources' => [
+        'collections' => true,
+        'navs' => false,
+        'taxonomies' => false,
+        'assets' => false,
+        'globals' => false,
+        'forms' => false,
+        'users' => true,
+    ],
+```
+
 ## How to Use
 
 Update the config or env to enable private API's.
