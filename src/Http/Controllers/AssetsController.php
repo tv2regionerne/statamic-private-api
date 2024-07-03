@@ -7,7 +7,7 @@ use Illuminate\Http\Testing\MimeType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Statamic\API\FilterAuthorizer;
+use Facades\Statamic\API\FilterAuthorizer;
 use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
 use Statamic\Facades\Asset;
