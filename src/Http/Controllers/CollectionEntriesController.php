@@ -2,10 +2,10 @@
 
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
+use Facades\Statamic\API\FilterAuthorizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
-use Facades\Statamic\API\FilterAuthorizer;
 use Statamic\Facades;
 use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\EntriesController as CpController;

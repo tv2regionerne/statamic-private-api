@@ -2,12 +2,12 @@
 
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
+use Facades\Statamic\API\FilterAuthorizer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Testing\MimeType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Facades\Statamic\API\FilterAuthorizer;
 use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
 use Statamic\Facades\Asset;
