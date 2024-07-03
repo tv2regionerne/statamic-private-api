@@ -2,6 +2,7 @@
 
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
+use Facades\Statamic\API\FilterAuthorizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
@@ -15,9 +16,12 @@ class CollectionEntriesController extends ApiController
 {
     use VerifiesPrivateAPI;
 
+    protected $collectionHandle;
+
     public function index($collection)
     {
         $collection = $this->collectionFromHandle($collection);
+        $this->collectionHandle = $collection->handle();
         $this->authorize('view', $collection);
 
         $with = $collection->entryBlueprints()
@@ -131,5 +135,10 @@ class CollectionEntriesController extends ApiController
         }
 
         return $entry;
+    }
+
+    protected function allowedFilters()
+    {
+        return FilterAuthorizer::allowedForSubResources('api', 'collections', $this->collectionHandle);
     }
 }
