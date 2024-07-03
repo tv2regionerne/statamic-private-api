@@ -7,6 +7,7 @@ use Illuminate\Http\Testing\MimeType;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Statamic\API\FilterAuthorizer;
 use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
 use Statamic\Facades\Asset;
@@ -21,9 +22,12 @@ class AssetsController extends ApiController
 {
     use VerifiesPrivateAPI;
 
+    private $containerHandle;
+
     public function index($container)
     {
         $container = $this->containerFromHandle($container);
+        $this->containerHandle = $container->handle();
 
         return AssetResource::collection(
             $this->filterSortAndPaginate($container->queryAssets())
@@ -194,5 +198,10 @@ class AssetsController extends ApiController
         }
 
         return $filename;
+    }
+
+    protected function allowedFilters()
+    {
+        return FilterAuthorizer::allowedForSubResources('api', 'assets', $this->containerHandle);
     }
 }
