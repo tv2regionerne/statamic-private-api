@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Statamic\Facades;
 
@@ -22,6 +23,30 @@ it('gets users', function () {
     $json = $response->json();
 
     $this->assertCount(1, $json['data']);
+});
+
+it('gets filtered users', function () {
+    $user = tap(Facades\User::make()->email('test@test2.com'))->save();
+
+    $this->actingAs(makeUser());
+
+    // If the config doesn't allow the filter
+    $response = $this->get(route('private.users.index', [
+        'filter[email:is]' => $user->email(),
+    ]));
+    $response->assertStatus(422);
+
+    // If the config does allow the filter
+    Config::set('private-api.resources.users.allowed_filters', ['email']);
+    $response = $this->get(route('private.users.index', [
+        'filter[email:is]' => $user->email(),
+    ]));
+
+    $json = $response->json();
+
+    $this->assertCount(1, $json['data']);
+
+    $this->assertSame('test@test2.com', collect($json['data'])->pluck('email')->join('|'));
 });
 
 it('gets individual users', function () {
