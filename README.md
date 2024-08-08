@@ -73,6 +73,12 @@ PRIVATE_API_ENABLED=true
 PRIVATE_API_ROUTE="api/private"
 ```
 
+### Filters
+
+Filters are already enabled, and you do not need to manually enable them for each resource as you do with the core public API.
+
+Therefore you can make requests like:
+```GET https://www.example.test/api/private/users/?filter[email:is]=example@example.com```
 
 ## Addon endpoints in private API
 Other addons can register their private API endpoints in the private API.  
