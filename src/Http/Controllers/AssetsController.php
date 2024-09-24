@@ -56,7 +56,7 @@ class AssetsController extends ApiController
         $request->merge([
             'container' => $container,
         ]);
-        $this->authorize('store', $container);
+        $this->authorize('store', [AssetContract::class, $this->containerFromHandle($container)]);
 
         if ($file = $request->input('file_url')) {
             $contents = file_get_contents($file);
