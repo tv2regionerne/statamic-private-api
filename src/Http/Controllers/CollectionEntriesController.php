@@ -3,11 +3,11 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Facades\Statamic\API\FilterAuthorizer;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
-use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Collections\EntriesController as CpController;
 use Statamic\Http\Resources\API\EntryResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
@@ -48,6 +48,11 @@ class CollectionEntriesController extends ApiController
     {
         $collection = $this->collectionFromHandle($collection);
 
+        $request->replace($this->normalizeDateFieldtypeValuesByHandles(
+            $this->dateFieldHandlesForCollection($collection),
+            $request->all()
+        ));
+
         try {
             $response = (new CpController($request))->store($request, $collection, Facades\Site::current());
         } catch (ValidationException $e) {
@@ -75,7 +80,7 @@ class CollectionEntriesController extends ApiController
         $originalData = collect((new CpController($request))->edit($request, $collection, $entry)->get('values'))->filter();
         $originalData = $originalData->merge($request->all());
 
-        $request->merge($originalData->all());
+        $request->replace($this->normalizeDateFieldtypeValues($entry, $originalData->all()));
 
         try {
             $response = (new CpController($request))->update($request, $collection, $entry);
@@ -135,6 +140,76 @@ class CollectionEntriesController extends ApiController
         }
 
         return $entry;
+    }
+
+    private function normalizeDateFieldtypeValues($entry, array $payload): array
+    {
+        $dateFieldHandles = $entry->blueprint()->fields()->all()
+            ->filter(fn ($field) => $field->type() === 'date')
+            ->keys();
+
+        return $this->normalizeDateFieldtypeValuesByHandles($dateFieldHandles, $payload);
+    }
+
+    private function dateFieldHandlesForCollection($collection)
+    {
+        return $collection->entryBlueprints()
+            ->flatMap(fn ($blueprint) => $blueprint->fields()->all())
+            ->filter(fn ($field) => $field->type() === 'date')
+            ->keys()
+            ->unique()
+            ->values();
+    }
+
+    private function normalizeDateFieldtypeValuesByHandles($dateFieldHandles, array $payload): array
+    {
+        foreach ($dateFieldHandles as $handle) {
+            if (! Arr::has($payload, $handle)) {
+                continue;
+            }
+
+            Arr::set($payload, $handle, $this->normalizeDateValue(Arr::get($payload, $handle)));
+        }
+
+        return $payload;
+    }
+
+    private function normalizeDateValue($value)
+    {
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        if (Arr::has($value, 'start') || Arr::has($value, 'end')) {
+            return [
+                'start' => $this->normalizeDateValue(Arr::get($value, 'start')),
+                'end' => $this->normalizeDateValue(Arr::get($value, 'end')),
+            ];
+        }
+
+        if (! Arr::has($value, 'date') && ! Arr::has($value, 'time')) {
+            return $value;
+        }
+
+        $date = Arr::get($value, 'date');
+
+        if (! $date) {
+            return null;
+        }
+
+        $time = Arr::get($value, 'time') ?: '00:00:00';
+
+        if (preg_match('/^\d{2}:\d{2}$/', $time)) {
+            $time .= ':00';
+        }
+
+        try {
+            return Carbon::parse($date.' '.$time)
+                ->utc()
+                ->format('Y-m-d\\TH:i:s.v\\Z');
+        } catch (\Throwable $e) {
+            return (string) $date;
+        }
     }
 
     protected function allowedFilters()

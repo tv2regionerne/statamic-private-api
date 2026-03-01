@@ -5,7 +5,6 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
-use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Navigation\NavigationController as CpController;
 use Statamic\Query\ItemQueryBuilder;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\NavResource;
@@ -73,7 +72,11 @@ class NavsController extends ApiController
     {
         $nav = $this->navFromHandle($nav);
 
-        return (new CpController($request))->destroy($nav->handle());
+        $this->authorize('delete', $nav);
+
+        $nav->delete();
+
+        return response()->json();
     }
 
     private function navFromHandle($nav)

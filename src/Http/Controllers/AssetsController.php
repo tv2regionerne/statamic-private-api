@@ -12,7 +12,6 @@ use Statamic\Contracts\Assets\Asset as AssetContract;
 use Statamic\Facades;
 use Statamic\Facades\Asset;
 use Statamic\Facades\Blink;
-use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Assets\AssetsController as CpController;
 use Symfony\Component\Mime\MimeTypes;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\AssetResource;
@@ -82,7 +81,7 @@ class AssetsController extends ApiController
 
             // Check mimetype of the file and detect extension for the file
             $mimetype = mime_content_type($tmpPath);
-            $mimetypes = new MimeTypes();
+            $mimetypes = new MimeTypes;
             $extension = collect($mimetypes->getExtensions($mimetypes->guessMimeType($tmpPath)))->first();
 
             // Create filename if not set through request

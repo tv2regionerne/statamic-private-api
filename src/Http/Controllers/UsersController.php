@@ -3,12 +3,12 @@
 namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Statamic\Contracts\Auth\User;
 use Statamic\Facades;
-use Statamic\Http\Controllers\API\ApiController;
-use Statamic\Http\Controllers\CP\Users\UsersController as CpController;
 use Statamic\Http\Resources\API\UserResource;
+use Statamic\Rules\UniqueUserValue;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 
 class UsersController extends ApiController
@@ -41,14 +41,35 @@ class UsersController extends ApiController
 
     public function store(Request $request)
     {
+        abort_if(! $this->resourcesAllowed('users', ''), 404);
+
+        $this->authorize('create', [User::class]);
+
         try {
-            if (! $request->input('invitation')) {
-                $request = $request->merge(['invitation' => ['send' => false]]);
+            $validator = Validator::make($request->all(), [
+                'email' => ['required', 'email', new UniqueUserValue],
+            ]);
+
+            $validator->setAttributeNames([
+                'email' => 'Email Address',
+            ]);
+
+            $validator->validate();
+
+            $user = Facades\User::make()
+                ->email($request->string('email')->toString());
+
+            foreach ($request->except(['email', 'super', 'groups', 'roles', 'invitation']) as $key => $value) {
+                $user->set($key, $value);
             }
 
-            (new CpController($request))->store($request);
+            if ($request->boolean('super') && Facades\User::current()?->isSuper()) {
+                $user->makeSuper();
+            }
 
-            $user = Facades\User::findByEmail($request->input('email'));
+            $user->save();
+
+            $user = Facades\User::findByEmail($request->string('email')->toString());
 
             return app(UserResource::class)::make($user);
         } catch (ValidationException $e) {
@@ -64,14 +85,34 @@ class UsersController extends ApiController
             abort(404);
         }
 
+        $this->authorize('edit', $user);
+
         try {
-            $data = $this->show($id)->toArray($request);
+            $payload = array_merge($request->all(), [
+                'email' => $request->input('email', $user->email()),
+            ]);
 
-            $mergedData = collect($data)->merge($request->all());
+            $validator = Validator::make($payload, [
+                'email' => ['required', 'email', new UniqueUserValue(except: $user->id())],
+            ]);
 
-            $request->merge($mergedData->all());
+            $validator->setAttributeNames([
+                'email' => 'Email Address',
+            ]);
 
-            (new CpController($request))->update($request, $id);
+            $validator->validate();
+
+            foreach ($request->except(['email', 'super', 'groups', 'roles', 'invitation']) as $key => $value) {
+                $user->set($key, $value);
+            }
+
+            $user->email($payload['email']);
+
+            if ($request->has('super') && Facades\User::current()?->isSuper() && Facades\User::current()?->id() !== $user->id()) {
+                $user->super = $request->boolean('super');
+            }
+
+            $user->save();
 
             return app(UserResource::class)::make($user);
         } catch (ValidationException $e) {

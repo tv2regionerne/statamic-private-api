@@ -39,9 +39,9 @@ it('gets a tree', function () {
 });
 
 it('updates a tree', function () {
-    Facades\Site::setConfig(['sites' => [
+    Facades\Site::setSites([
         'en' => ['url' => 'http://domain.com/', 'locale' => 'en'],
-    ]]);
+    ]);
 
     $collection = tap(Facades\Collection::make('test')->structureContents(['root' => true, 'max_depth' => 3]))->save();
 

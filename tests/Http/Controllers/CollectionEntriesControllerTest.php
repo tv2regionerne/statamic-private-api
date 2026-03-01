@@ -91,6 +91,47 @@ it('gets updates an entry', function () {
     $this->assertSame('test', $entry1->fresh()->get('title'));
 });
 
+it('updates dated entries without failing date validation on partial updates', function () {
+    $collection = tap(Facades\Collection::make('test')->dated(true))->save();
+
+    $entry = tap(Facades\Entry::make()->id('dated-entry')->collection($collection)->date('2026-01-15')->set('title', 'before'))->save();
+
+    $this->actingAs(makeUser());
+
+    $response = $this->patch(route('private.collections.entries.update', ['collection' => $collection->handle(), 'entry' => $entry->id()]), [
+        'title' => 'after',
+    ]);
+
+    $response->assertOk();
+    $response->assertJsonPath('data.title', 'after');
+
+    $updated = $entry->fresh();
+
+    $this->assertSame('after', $updated->get('title'));
+    $this->assertSame('2026-01-15', $updated->date()->format('Y-m-d'));
+});
+
+it('updates dated entries when date is sent as date and time array', function () {
+    $collection = tap(Facades\Collection::make('test')->dated(true))->save();
+
+    $entry = tap(Facades\Entry::make()->id('dated-entry-array')->collection($collection)->date('2026-01-15')->set('title', 'before'))->save();
+
+    $this->actingAs(makeUser());
+
+    $response = $this->patch(route('private.collections.entries.update', ['collection' => $collection->handle(), 'entry' => $entry->id()]), [
+        'date' => [
+            'date' => '2025-06-10',
+            'time' => '09:30',
+        ],
+    ]);
+
+    $response->assertOk();
+
+    $updated = $entry->fresh();
+
+    $this->assertSame('2025-06-10', $updated->date()->format('Y-m-d'));
+});
+
 it('gets deletes an entry', function () {
     $collection = tap(Facades\Collection::make('test'))->save();
 
@@ -126,6 +167,29 @@ it('creates an entry', function () {
 
     $this->assertSame('test', \Statamic\Support\Arr::get($json, 'data.title'));
     $this->assertSame('test', Facades\Entry::all()->first()->get('title'));
+});
+
+it('creates dated entries when date is sent as date and time array', function () {
+    Event::fake();
+
+    $collection = tap(Facades\Collection::make('test')->dated(true))->save();
+
+    $this->actingAs(makeUser());
+
+    $response = $this->post(route('private.collections.entries.store', ['collection' => $collection->handle()]), [
+        'title' => 'test',
+        'date' => [
+            'date' => '2025-06-10',
+            'time' => '09:30',
+        ],
+    ]);
+
+    $response->assertOk();
+
+    $entry = Facades\Entry::all()->first();
+
+    $this->assertSame('test', $entry->get('title'));
+    $this->assertSame('2025-06-10', $entry->date()->format('Y-m-d'));
 });
 
 it('returns validation errors when creating an entry', function () {

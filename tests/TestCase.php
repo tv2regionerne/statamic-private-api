@@ -4,7 +4,7 @@ namespace Tv2regionerne\StatamicPrivateApi\Tests;
 
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Statamic\Extend\Manifest;
+use Statamic\Addons\Manifest;
 use Statamic\Providers\StatamicServiceProvider;
 use Statamic\Stache\Stores\UsersStore;
 use Statamic\Statamic;
@@ -25,8 +25,7 @@ abstract class TestCase extends AddonTestCase
 
         $this->runLaravelMigrations();
 
-        \Facades\Statamic\Version::shouldReceive('get')->andReturn('4.0.0-testing');
-        $this->addToAssertionCount(-1); // Dont want to assert this
+        \Facades\Statamic\Version::shouldReceive('get')->andReturn('6.0.0-testing');
 
         $this->preventSavingStacheItemsToDisk();
     }
@@ -75,7 +74,7 @@ abstract class TestCase extends AddonTestCase
         ]);
 
         // Opret 'test' disken midlertidigt for testens varighed
-        //Storage::fake('test');
+        // Storage::fake('test');
     }
 
     protected function resolveApplicationConfiguration($app)
@@ -91,7 +90,7 @@ abstract class TestCase extends AddonTestCase
             'cp',
             'forms',
             'static_caching',
-            //'sites',
+            // 'sites',
             'stache',
             'system',
             'users',
@@ -100,7 +99,7 @@ abstract class TestCase extends AddonTestCase
         foreach ($configs as $config) {
             $app['config']->set(
                 "statamic.$config",
-                require(__DIR__."/../vendor/statamic/cms/config/{$config}.php")
+                require (__DIR__."/../vendor/statamic/cms/config/{$config}.php")
             );
         }
 
@@ -112,7 +111,7 @@ abstract class TestCase extends AddonTestCase
             'directory' => __DIR__.'/__fixtures__/users',
         ]);
 
-        $app['config']->set('private-api', require(__DIR__.'/../config/private-api.php'));
+        $app['config']->set('private-api', require (__DIR__.'/../config/private-api.php'));
         $app['config']->set('private-api.enabled', true);
         $app['config']->set('private-api.middleware', 'web');
         $app['config']->set('private-api.resources', [

@@ -5,7 +5,6 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
-use Statamic\Http\Controllers\API\ApiController;
 use Statamic\Http\Controllers\CP\Forms\FormsController as CpController;
 use Statamic\Http\Resources\API\FormResource;
 use Statamic\Query\ItemQueryBuilder;

@@ -5,7 +5,6 @@ namespace Tv2regionerne\StatamicPrivateApi\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Statamic\Facades;
-use Statamic\Http\Controllers\API\ApiController;
 use Tv2regionerne\StatamicPrivateApi\Http\Resources\GlobalVariablesResource;
 use Tv2regionerne\StatamicPrivateApi\Traits\VerifiesPrivateAPI;
 
@@ -45,8 +44,7 @@ class GlobalVariablesController extends ApiController
             }
 
             $set->data($values);
-
-            $set->globalSet()->addLocalization($set)->save();
+            $set->save();
 
             $global = $this->globalFromHandle($handle);
 
