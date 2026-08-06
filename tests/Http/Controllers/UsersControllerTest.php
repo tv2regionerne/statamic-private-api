@@ -24,6 +24,14 @@ it('gets users', function () {
     $this->assertCount(1, $json['data']);
 });
 
+it('forbids listing users without permission', function () {
+    $user = tap(Facades\User::make()->email('unauthorized@test.com'))->save();
+
+    $this->actingAs($user);
+
+    $this->get(route('private.users.index'))->assertForbidden();
+});
+
 it('gets individual users', function () {
     $user = tap(Facades\User::make()->email('test@test2.com'))->save();
 
