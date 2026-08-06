@@ -65,9 +65,9 @@ class UsersController extends ApiController
         }
 
         try {
-            $data = $this->show($id)->toArray($request);
-
-            $mergedData = collect($data)->merge($request->all());
+            $mergedData = $user->data()
+                ->merge(['email' => $user->email()])
+                ->merge($request->all());
 
             $request->merge($mergedData->all());
 
