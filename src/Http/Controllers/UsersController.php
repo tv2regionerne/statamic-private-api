@@ -19,7 +19,7 @@ class UsersController extends ApiController
     {
         abort_if(! $this->resourcesAllowed('users', ''), 404);
 
-        $this->authorize('view', [User::class]);
+        $this->authorize('index', User::class);
 
         return app(UserResource::class)::collection(
             $this->filterSortAndPaginate(Facades\User::query())
